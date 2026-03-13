@@ -1,0 +1,41 @@
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build, test, coverage, and temporary output
+build/
+dist/
+coverage/
+.cache/
+tmp/
+temp/
+*.log
+
+# Common local env / secret files
+.env
+.env.*
+!.env.example
+
+# Local Docker overrides
+docker-compose.override.yml
+
+# Quarto rendered output (source .qmd files are kept)
+BentoPDF_HA_app.html
+BentoPDF_HA_app_files/
+
+# Claude context files
+.claude/
+CLAUDE.md
+CLAUDE-activeContext.md
+CLAUDE-patterns.md
+CLAUDE-decisions.md
+CLAUDE-troubleshooting.md
+CLAUDE-config-variables.md
+CLAUDE-temp.md
