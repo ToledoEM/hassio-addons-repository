@@ -1,0 +1,13 @@
+configuration:
+  enable_login:
+    name: Enable login
+    description: Enable Stirling-PDF's built-in authentication (SECURITY_ENABLELOGIN). Disabled by default for local use.
+  langs:
+    name: OCR languages
+    description: Comma-separated language codes for Tesseract OCR (e.g. "en_GB,fra,deu"). See Stirling-PDF docs for available codes.
+  log_level:
+    name: Log level
+    description: Verbosity of add-on and application logging.
+
+network:
+  8080/tcp: Stirling-PDF Full Web UI
