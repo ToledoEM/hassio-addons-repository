@@ -1,0 +1,113 @@
+name: Build add-on images
+
+on:
+  push:
+    tags:
+      - "bentopdf-*"
+      - "manyfold_solo-*"
+      - "stirling_pdf-*"
+      - "stirling_pdf_full-*"
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  bentopdf:
+    name: Build bentopdf
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'bentopdf-')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push bentopdf
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --all \
+            -t bentopdf \
+            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+
+  manyfold_solo:
+    name: Build manyfold_solo
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'manyfold_solo-')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push manyfold_solo
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --all \
+            -t manyfold_solo \
+            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+
+  stirling_pdf:
+    name: Build stirling_pdf
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'stirling_pdf-') && !startsWith(github.ref_name, 'stirling_pdf_full-')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push stirling_pdf
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --all \
+            -t stirling_pdf \
+            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+
+  stirling_pdf_full:
+    name: Build stirling_pdf_full
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'stirling_pdf_full-')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push stirling_pdf_full
+        uses: home-assistant/builder@master
+        with:
+          args: |
+            --all \
+            -t stirling_pdf_full \
+            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
