@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.135.0
+
+- Bumped upstream Manyfold image to `ghcr.io/manyfold3d/manyfold-solo:0.135.0` for both `amd64` and `aarch64`.
+
 ## 1.0.3
 
 - Pointed add-on metadata URL to the canonical Manyfold add-on path in `ToledoEM/hassio-addons`.

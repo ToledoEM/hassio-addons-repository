@@ -1,10 +1,26 @@
 # HA Addons Playground
 
-Experimental Home Assistant add-ons repository by ToledoEM.
+Experimental Home Assistant add-ons by ToledoEM.
+
+## Add this repository to Home Assistant
+
+[![Add to Home Assistant](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FToledoEM%2Fhassio-addons-repository)
+
+Or add manually:
+
+1. **Settings** → **Add-ons** → **Add-on Store**
+2. Click ⋮ (top right) → **Manage add-on repositories**
+3. Paste the URL below and click **Add**
+
+```
+https://github.com/ToledoEM/hassio-addons-repository
+```
 
 ## Add-ons
 
-| Name | Version |
-|------|---------|
-| BentoPDF | 2.5.0 |
-| Manyfold | 0.133.1 |
+| Name | Slug | Version | Description |
+|------|------|---------|-------------|
+| [BentoPDF](bentopdf/README.md) | `bentopdf` | 2.5.0 | Privacy-first PDF toolkit — 50+ tools, all client-side |
+| [Manyfold](manyfold_solo/README.md) | `manyfold_solo` | 0.135.0 | 3D model manager for your library |
+| [Stirling-PDF](stirling_pdf/README.md) | `stirling_pdf` | 2.8.0 | Core PDF tools — merge, split, compress, convert |
+| [Stirling-PDF Full](stirling_pdf_full/README.md) | `stirling_pdf_full` | 2.8.0 | Full Stirling-PDF with OCR and LibreOffice conversion |

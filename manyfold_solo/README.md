@@ -1,28 +1,18 @@
 # Manyfold Home Assistant Add-on
 
-![Manyfold Home Assistant Add-on logo](manyfold_solo/logo.png)
-
-This repository provides a Home Assistant OS add-on for Manyfold with persistent storage and configurable host-backed media paths.
+This add-on wraps `ghcr.io/manyfold3d/manyfold-solo` for Home Assistant OS with persistent storage and configurable host-backed media paths.
 
 Documentation: [manyfold.app/get-started](https://manyfold.app/get-started/)
-
-**Now in the Custom alexbelgium/hassio-addons Add-on Store! 💪**   
- Search for "Manyfold" and install directly from there and instructions how to add it to your Home Assistant instance. [link](https://github.com/alexbelgium/hassio-addons)
-
 
 ## Features
 
 - Runs Manyfold on port `3214`.
 - Persists app data, database, cache, and settings under `/config` (`addon_config`).
-- Uses configurable library and thumbnails paths on Home Assistant host storage.
+- Uses a configurable library path on Home Assistant host storage.
 - Refuses startup if configured paths resolve outside `/share`, `/media`, or `/config`.
 - No external PostgreSQL or Redis required.
 - Supports `amd64` and `aarch64`.
-
-## Repository layout
-
-- `repository.yaml`: Home Assistant add-on repository manifest.
-- `manyfold_solo/`: Add-on package consumed by Home Assistant OS.
+- Includes a baseline AppArmor profile.
 
 ## Default paths
 
@@ -31,14 +21,22 @@ Documentation: [manyfold.app/get-started](https://manyfold.app/get-started/)
 
 ## Installation
 
-1. In Home Assistant OS Add-on Store, open menu (`...`) -> `Repositories`.
-2. Add the Git repository URL: `https://github.com/ToledoEM/hassio-addons`.
-3. Refresh Add-on Store and install **Manyfold**.
-4. Configure options (defaults are safe for first run):
+1. Add my add-ons repository to your home assistant instance (in supervisor addons store at top right, or click button below if you have configured my HA)
+   [![Open your Home Assistant instance and show the add add-on repository dialog with a specific repository URL pre-filled.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2Falexbelgium%2Fhassio-addons)
+2. Refresh Add-on Store and install **Manyfold**.
+3. Configure options (defaults are safe for first run):
    - `library_path`: `/share/manyfold/models`
    - `secret_key_base`: leave blank to auto-generate
-5. Start the add-on.
-6. Open `http://<HA_IP>:3214`.
+   - `puid` / `pgid`: set to a non-root UID/GID (see "Fix root warning (PUID/PGID)" below)
+   - optionally tune worker/thread and upload limits in "Small server tuning" below
+4. Start the add-on.
+5. Open `http://<HA_IP>:3214`.
+
+Before first start, ensure your library folder exists on the Home Assistant host (for example via the Terminal & SSH add-on):
+
+```bash
+mkdir -p /share/manyfold/models
+```
 
 Local development alternative on the HA host:
 
@@ -54,44 +52,95 @@ Local development alternative on the HA host:
 
 ## Options
 
-- `secret_key_base`: App secret used by Rails to sign/encrypt sessions and tokens. See [Secret Key Base](#secret-key-base) below.
-- `puid` / `pgid`: Ownership applied to mapped directories.
+- `secret_key_base`: App secret. Auto-generated and persisted at `/config/secret_key_base` when empty.
+- `puid` / `pgid`: Ownership applied to writable mapped directories (`/config` paths).
 - `multiuser`: Toggle Manyfold multiuser mode.
 - `library_path`: Scanned/indexed path.
 - `thumbnails_path`: Persistent thumbnails/index artifacts (must be under `/config`).
 - `log_level`: `info`, `debug`, `warn`, `error`.
+- `web_concurrency`: Puma worker process count.
+- `rails_max_threads`: Max threads per Puma worker.
+- `default_worker_concurrency`: Sidekiq default queue concurrency.
+- `performance_worker_concurrency`: Sidekiq performance queue concurrency.
+- `max_file_upload_size`: Max uploaded archive size in bytes.
+- `max_file_extract_size`: Max extracted archive size in bytes.
+
+## Small server tuning
+
+For low-memory HAOS hosts, start with:
+
+```yaml
+web_concurrency: 1
+rails_max_threads: 5
+default_worker_concurrency: 2
+performance_worker_concurrency: 1
+max_file_upload_size: 268435456
+max_file_extract_size: 536870912
+```
+
+Then restart the add-on and increase gradually only if needed.
+
+## Fix root warning (PUID/PGID)
+
+If Manyfold shows:
+
+`Manyfold is running as root, which is a security risk.`
+
+set `puid` and `pgid` in the add-on Configuration tab to a non-root UID/GID.
+
+Example:
+
+```yaml
+puid: 1000
+pgid: 1000
+```
+
+How to find the correct values in Home Assistant:
+
+1. Open the **Terminal & SSH** add-on (or SSH into the HA host).
+2. If you know the target Linux user name, run:
+
+```bash
+id <username>
+```
+
+Use the `uid=` value for `puid` and `gid=` value for `pgid`.
+
+If you do not have a specific username, use the owner of the Manyfold folders:
+
+```bash
+stat -c '%u %g' /share/manyfold/models
+```
+
+Set `puid`/`pgid` to those numbers.
+
+After changing values:
+
+1. Save add-on Configuration.
+2. Restart the Manyfold add-on.
+3. Check logs for `puid:pgid=<uid>:<gid>` and confirm the warning is gone.
+
+## Update procedure
+
+This add-on uses a local build (via `Dockerfile` + `build.yaml`) rather than a pre-built registry image, so updating requires a **Rebuild** — not just a standard update.
+
+When a new version is released:
+
+1. In HA, go to **Settings → Add-ons → Add-on Store**.
+2. Click the **⋮ menu** (top right) → **Check for updates** (or **Reload**).
+3. Open the **Manyfold** add-on page.
+4. Click **Rebuild** (not Update).
+
+**Why Rebuild?**
+A normal *Update* swaps in a pre-built image from a registry. This add-on instead builds locally from `Dockerfile`, which uses `FROM ${BUILD_FROM}` to pull the upstream `manyfold-solo` image specified in `build.yaml`. *Rebuild* re-runs that Dockerfile against the new base image, installs the required packages, and replaces the running container with the result.
 
 ## Validation behavior
 
 - Startup fails if `library_path` or `thumbnails_path` resolve outside mapped storage roots.
 - `thumbnails_path` must resolve under `/config` to guarantee persistence.
+- Startup fails if `library_path` is not readable.
 
 ## Notes
 
 - This baseline avoids Home Assistant ingress and keeps direct port access.
 - If `puid`/`pgid` change, restart the add-on to re-apply ownership to mapped directories.
-
-## Secret Key Base
-
-`secret_key_base` is a required Rails secret used to sign and encrypt user sessions and tokens. Changing it will invalidate all active sessions and log everyone out.
-
-**How it works:**
-
-| Scenario | Behaviour |
-|----------|-----------|
-| **New install**, option left blank | A random secret is auto-generated and saved to `/config/secret_key_base` |
-| **Addon update**, option still blank | The previously saved `/config/secret_key_base` is reused — no data loss |
-| **Option manually set** | The value from the addon options is used directly |
-| **Option was set, then cleared on update** | A new secret is generated — **sessions will be invalidated** |
-
-**Recommendation:** Leave `secret_key_base` blank on first install and never change it afterwards. The auto-generated value persists across updates in `/config/secret_key_base`, which is part of the addon config storage and is included in Home Assistant backups.
-
-If you ever need to migrate to a new HA instance, copy `/config/secret_key_base` alongside your database to avoid losing sessions.
-
-## Versioning
-
-The add-on version in `config.yaml` (`version`) must match an existing tag of the upstream Docker image
-[`ghcr.io/manyfold3d/manyfold-solo`](https://github.com/manyfold3d/manyfold/pkgs/container/manyfold-solo),
-since Home Assistant uses it directly as the image tag when pulling.
-This means the add-on version number reflects the **Manyfold app version**, not an independent add-on release version.
-When a new Manyfold release is published upstream, update `version` in `config.yaml` to match the new tag (e.g. `0.99.1` → `1.0.0`).

@@ -5,3 +5,6 @@
 CLAUDE.md
 .claude/
 CLAUDE-*.md
+
+# Local sync script
+sync-addons.sh
