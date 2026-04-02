@@ -22,5 +22,5 @@ https://github.com/ToledoEM/hassio-addons-repository
 |------|------|---------|-------------|
 | [BentoPDF](bentopdf/README.md) | `bentopdf` | 2.5.0 | Privacy-first PDF toolkit — 50+ tools, all client-side |
 | [Manyfold](manyfold_solo/README.md) | `manyfold_solo` | 0.135.0 | 3D model manager for your library |
-| [Stirling-PDF](stirling_pdf/README.md) | `stirling_pdf` | 2.8.0 | Core PDF tools — merge, split, compress, convert |
-| [Stirling-PDF Full](stirling_pdf_full/README.md) | `stirling_pdf_full` | 2.8.0 | Full Stirling-PDF with OCR and LibreOffice conversion |
+| [Stirling-PDF](stirling_pdf/README.md) | `stirling_pdf` | 2.9.0 | Core PDF tools — merge, split, compress, convert |
+| [Stirling-PDF Full](stirling_pdf_full/README.md) | `stirling_pdf_full` | 2.9.0 | Full Stirling-PDF with OCR and LibreOffice conversion |

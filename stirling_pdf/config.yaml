@@ -1,7 +1,7 @@
 name: "Stirling-PDF"
 slug: stirling_pdf
 description: "Stirling-PDF — core PDF tools (merge, split, compress, convert, sign, annotate). Lightweight. No OCR or Office conversion."
-version: "2.8.0"
+version: "2.9.0"
 url: "https://github.com/ToledoEM/Stirling-PDF-HA_app/tree/main/stirling_pdf"
 arch:
   - amd64

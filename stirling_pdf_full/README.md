@@ -86,6 +86,9 @@ Two-stage Docker build: app and all external tools are copied from `stirlingtool
 
 ## Changelog
 
+### 2.9.0
+- Update to Stirling-PDF 2.9.0.
+
 ### 2.8.0
 - Initial release.
 

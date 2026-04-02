@@ -84,6 +84,9 @@ Two-stage Docker build: the Stirling-PDF application is copied from `stirlingtoo
 
 ## Changelog
 
+### 2.9.0
+- Update to Stirling-PDF 2.9.0.
+
 ### 2.8.0
 - Initial release.
 
