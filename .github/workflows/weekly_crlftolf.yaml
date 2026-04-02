@@ -1,0 +1,37 @@
+name: Fix CRLF Endings
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 2 * * 0"
+
+jobs:
+  fix-crlf:
+    name: Fix CRLF Endings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Find files with CRLF endings
+        uses: erclu/check-crlf@v1
+        id: check-crlf
+        with:
+          path: |
+            ./*
+            !.git
+            !*.png
+            !*.jpg
+            !*.bin
+
+      - name: Apply dos2unix to files with CRLF endings
+        run: |
+          for f in ${{ steps.check-crlf.outputs.files }}; do
+            dos2unix -k "$f"
+          done
+
+      - name: Commit if needed
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "bot: fix CRLF line endings"
+          default_author: github_actions

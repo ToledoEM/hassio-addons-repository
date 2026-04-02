@@ -1,0 +1,119 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-addon-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changedAddons: ${{ steps.find_addons.outputs.changed_addons }}
+      changedChangelogFiles: ${{ steps.find_changelog.outputs.changed_changelogs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find changed addon directories
+        id: find_addons
+        run: |
+          changed_config_files=$(git diff --name-only "origin/${{ github.base_ref }}" "${{ github.sha }}" | grep -E '^[^/]+/config\.(json|ya?ml)$' || true)
+          echo "Changed config files: $changed_config_files"
+          changed_addons=$(printf '%s' "$changed_config_files" | awk -F/ '{print $1}' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "Changed addons: $changed_addons"
+          echo "changed_addons=$changed_addons" >> "$GITHUB_OUTPUT"
+
+      - name: Find changed changelogs
+        id: find_changelog
+        run: |
+          changed_changelogs=$(git diff --name-only "origin/${{ github.base_ref }}" "${{ github.sha }}" | grep -iE '^[^/]+/CHANGELOG\.md$' || true)
+          echo "changed_changelogs=$changed_changelogs" >> "$GITHUB_OUTPUT"
+
+  check-changelog:
+    name: Check CHANGELOG.md updated
+    needs: check-addon-changes
+    if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' && needs.check-addon-changes.outputs.changedAddons != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJSON(needs.check-addon-changes.outputs.changedAddons) }}
+    steps:
+      - name: Check for updated CHANGELOG.md
+        run: |
+          if [[ ! "${{ needs.check-addon-changes.outputs.changedChangelogFiles }}" =~ "${{ matrix.addon }}/CHANGELOG.md" ]]; then
+            echo "::error::No new entry in ${{ matrix.addon }}/CHANGELOG.md!"
+            exit 1
+          fi
+
+  addon-linter:
+    name: Addon lint
+    needs: check-addon-changes
+    if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' && needs.check-addon-changes.outputs.changedAddons != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJSON(needs.check-addon-changes.outputs.changedAddons) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Home Assistant Add-on Lint
+        uses: frenck/action-addon-linter@v2
+        with:
+          path: "./${{ matrix.addon }}"
+
+  check-build:
+    name: Test build
+    needs: check-addon-changes
+    if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' && needs.check-addon-changes.outputs.changedAddons != '' }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJSON(needs.check-addon-changes.outputs.changedAddons) }}
+        arch: [amd64, aarch64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gather addon info
+        id: information
+        uses: frenck/action-addon-information@v1.4
+        with:
+          path: "./${{ matrix.addon }}/"
+
+      - name: Cache docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/buildx-cache
+          key: ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-${{ hashFiles(format('{0}/Dockerfile', matrix.addon)) }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build addon (${{ matrix.arch }})
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.addon }}
+          file: ${{ matrix.addon }}/Dockerfile
+          push: false
+          tags: local/${{ matrix.addon }}-${{ matrix.arch }}:test
+          build-args: |
+            BUILD_FROM=${{ fromJSON(steps.information.outputs.build_from)[matrix.arch] }}
+          cache-from: type=local,src=/tmp/buildx-cache/${{ matrix.arch }}
+          cache-to: type=local,dest=/tmp/buildx-cache-new/${{ matrix.arch }}
+
+      - name: Update cache
+        run: |
+          rm -rf /tmp/buildx-cache
+          mv /tmp/buildx-cache-new /tmp/buildx-cache
