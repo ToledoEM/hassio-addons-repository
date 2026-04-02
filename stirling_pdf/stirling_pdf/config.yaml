@@ -1,0 +1,32 @@
+name: "Stirling-PDF"
+slug: stirling_pdf
+description: "Stirling-PDF — core PDF tools (merge, split, compress, convert, sign, annotate). Lightweight. No OCR or Office conversion."
+version: "2.8.0"
+url: "https://github.com/ToledoEM/Stirling-PDF-HA_app/tree/main/stirling_pdf"
+arch:
+  - amd64
+  - aarch64
+startup: application
+init: false
+
+ports:
+  8080/tcp: 8080
+ports_description:
+  8080/tcp: "Stirling-PDF Web UI"
+
+webui: "http://[HOST]:[PORT:8080]"
+
+map:
+  - addon_config:rw
+  - share:rw
+  - media:rw
+
+options:
+  enable_login: false
+  langs: "en_GB"
+  log_level: "info"
+
+schema:
+  enable_login: bool
+  langs: str
+  log_level: list(info|debug|warn|error)

@@ -1,0 +1,24 @@
+#include <tunables/global>
+
+profile hassio-addons/stirling_pdf flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+
+  # Baseline profile for Stirling-PDF (JVM) in HAOS.
+  # Keep broad compatibility while denying known high-risk kernel interfaces.
+  file,
+  network,
+
+  # Capabilities required for ownership management.
+  capability chown,
+  capability dac_override,
+  capability fowner,
+  capability setgid,
+  capability setuid,
+
+  deny /proc/kcore rwklx,
+  deny /proc/sysrq-trigger rwklx,
+  deny /sys/firmware/** rwklx,
+}

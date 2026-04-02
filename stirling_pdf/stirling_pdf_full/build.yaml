@@ -1,0 +1,4 @@
+---
+build_from:
+  aarch64: stirlingtools/stirling-pdf:latest-fat
+  amd64: stirlingtools/stirling-pdf:latest-fat
