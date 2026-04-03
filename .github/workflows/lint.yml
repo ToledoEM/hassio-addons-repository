@@ -27,8 +27,12 @@ jobs:
 
       - name: Set diff range
         run: |
+          NULL_SHA="0000000000000000000000000000000000000000"
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "DIFF_RANGE=${{ github.event.pull_request.base.sha }}...${{ github.sha }}" >> $GITHUB_ENV
+          elif [ "${{ github.event.before }}" = "$NULL_SHA" ]; then
+            # First push to a new branch — diff against empty tree
+            echo "DIFF_RANGE=$(git hash-object -t tree /dev/null)...${{ github.sha }}" >> $GITHUB_ENV
           else
             echo "DIFF_RANGE=${{ github.event.before }}...${{ github.sha }}" >> $GITHUB_ENV
           fi
