@@ -6,5 +6,8 @@ CLAUDE.md
 .claude/
 CLAUDE-*.md
 
-# Local sync script
+# Local scripts and logs
 sync-addons.sh
+release-addons.sh
+sync-addons.log
+release-addons.log
