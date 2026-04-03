@@ -1,6 +1,6 @@
 # HA Addons Playground
 
-Experimental Home Assistant add-ons by ToledoEM.
+Experimental Home Assistant add-ons by toledoem for toledoem, feel free to try
 
 ## Add this repository to Home Assistant
 
