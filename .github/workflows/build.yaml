@@ -30,10 +30,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push bentopdf
-        uses: home-assistant/builder@master
+        uses: home-assistant/builder@2026.03.2
         with:
           args: |
-            --all \
+            --amd64 \
+            --aarch64 \
             -t bentopdf \
             --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
@@ -55,10 +56,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push manyfold_solo
-        uses: home-assistant/builder@master
+        uses: home-assistant/builder@2026.03.2
         with:
           args: |
-            --all \
+            --amd64 \
+            --aarch64 \
             -t manyfold_solo \
             --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
@@ -80,10 +82,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push stirling_pdf
-        uses: home-assistant/builder@master
+        uses: home-assistant/builder@2026.03.2
         with:
           args: |
-            --all \
+            --amd64 \
+            --aarch64 \
             -t stirling_pdf \
             --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
@@ -105,9 +108,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push stirling_pdf_full
-        uses: home-assistant/builder@master
+        uses: home-assistant/builder@2026.03.2
         with:
           args: |
-            --all \
+            --amd64 \
+            --aarch64 \
             -t stirling_pdf_full \
             --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
