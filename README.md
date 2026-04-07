@@ -26,3 +26,7 @@ https://github.com/ToledoEM/hassio-addons-repository
 | [Manyfold](manyfold_solo/README.md) | `manyfold_solo` | 0.135.0 | 3D model manager for your library |
 | [Stirling-PDF](stirling_pdf/README.md) | `stirling_pdf` | 2.9.0 | Core PDF tools — merge, split, compress, convert |
 | [Stirling-PDF Full](stirling_pdf_full/README.md) | `stirling_pdf_full` | 2.9.0 | Full Stirling-PDF with OCR and LibreOffice conversion |
+
+
+
+//Enjoy
