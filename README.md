@@ -19,6 +19,7 @@ https://github.com/ToledoEM/hassio-addons-repository
 ```
 
 ## Add-ons
+
 | Name | Slug | Version | Description |
 | :--- | :--- | :--- | :--- |
 | [BentoPDF](bentopdf/README.md) | bentopdf | 2.8.2 | Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device. |
