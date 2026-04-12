@@ -59,6 +59,10 @@ export LANGS
 export MODE="BOTH"
 export LOGGING_LEVEL="$LOG_LEVEL"
 
+# Cap JVM heap — upstream dynamic calc uses 70% of host RAM which OOMs on HA.
+# JAVA_BASE_OPTS is read by /scripts/init-without-ocr.sh before building JAVA_TOOL_OPTIONS.
+export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m"
+
 log "Configuration summary:"
 log "  enable_login=${ENABLE_LOGIN}"
 log "  langs=${LANGS}"
