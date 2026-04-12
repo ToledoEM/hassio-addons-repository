@@ -68,14 +68,6 @@ log "  tessdata=${TESSDATA_DIR}"
 log "  logs=${LOGS_DIR}"
 log "  pipeline=${PIPELINE_DIR}"
 
-# Start Stirling-PDF (jar lives at /app/app.jar in the two-stage build)
-if [[ -f /app/app.jar ]]; then
-  log "Starting Stirling-PDF via /app/app.jar"
-  cd /app
-  exec java \
-    -Dfile.encoding=UTF-8 \
-    -cp "/app/app.jar:/app/lib/*" \
-    stirling.software.SPDF.SPDFApplication
-fi
-
-die "Could not find Stirling-PDF jar at /app/app.jar. Check the build."
+# Delegate to upstream init script which handles java startup correctly
+log "Starting Stirling-PDF via /scripts/init.sh"
+exec /scripts/init.sh

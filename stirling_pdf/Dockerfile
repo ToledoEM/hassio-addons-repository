@@ -11,9 +11,26 @@ RUN apk add --no-cache \
       jq \
       openssl \
       ca-certificates \
-      openjdk21-jre-headless
+      curl
 
-# Copy the Stirling-PDF application and its runtime assets from upstream image
+# Install Zulu JDK 25 musl build (glibc Temurin won't run on Alpine/musl)
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+ARG ZULU_VERSION=zulu25.32.17-ca-jdk25.0.2
+# hadolint ignore=DL4006
+RUN ARCH="$(uname -m)" \
+    && case "$ARCH" in \
+         x86_64)  JDK_ARCH="x64" ;; \
+         aarch64) JDK_ARCH="aarch64" ;; \
+         *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
+       esac \
+    && curl -fsSL "https://cdn.azul.com/zulu/bin/${ZULU_VERSION}-linux_musl_${JDK_ARCH}.tar.gz" \
+       -o /tmp/jdk.tar.gz \
+    && mkdir -p "$JAVA_HOME" \
+    && tar -xzf /tmp/jdk.tar.gz -C "$JAVA_HOME" --strip-components=1 \
+    && rm /tmp/jdk.tar.gz \
+    && apk del curl
+
 COPY --from=stirling /app /app
 COPY --from=stirling /scripts /scripts
 COPY --from=stirling /configs /configs
