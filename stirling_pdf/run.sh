@@ -37,7 +37,7 @@ mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$TESSDATA_DIR" "$PIPELINE_DIR"
 # Symlink HA persistent paths → Stirling-PDF expected paths
 # (only if not already linked to a persistent location)
 for pair in \
-  "${CONFIGS_DIR}:/app/configs" \
+  "${CONFIGS_DIR}:/configs" \
   "${LOGS_DIR}:/logs" \
   "${TESSDATA_DIR}:/usr/share/tesseract-ocr/5/tessdata" \
   "${PIPELINE_DIR}:/pipeline"
@@ -58,10 +58,11 @@ export SECURITY_ENABLELOGIN="$ENABLE_LOGIN"
 export LANGS
 export MODE="BOTH"
 export LOGGING_LEVEL="$LOG_LEVEL"
+export HOME="${HOME:-/root}"
 
 # Cap JVM heap — upstream dynamic calc uses 70% of host RAM which OOMs on HA.
 # JAVA_BASE_OPTS is read by /scripts/init-without-ocr.sh before building JAVA_TOOL_OPTIONS.
-export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms256m -Xmx512m -XX:MaxMetaspaceSize=256m"
+export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms128m -Xmx512m -XX:MaxMetaspaceSize=192m -XX:MaxRAMPercentage=12"
 
 log "Configuration summary:"
 log "  enable_login=${ENABLE_LOGIN}"
@@ -74,4 +75,5 @@ log "  pipeline=${PIPELINE_DIR}"
 
 # Delegate to upstream init script which handles java startup correctly
 log "Starting Stirling-PDF via /scripts/init.sh"
+cd /app
 exec /scripts/init.sh

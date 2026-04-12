@@ -1,43 +1,32 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.23
 # hadolint ignore=DL3007
-FROM stirlingtools/stirling-pdf:latest AS stirling
+FROM stirlingtools/stirling-pdf:latest
 
-FROM ${BUILD_FROM}
-
-# hadolint ignore=DL3018
-RUN apk add --no-cache \
-      bash \
-      coreutils \
-      jq \
-      openssl \
-      ca-certificates \
-      curl
-
-# Install Zulu JDK 25 musl build (glibc Temurin won't run on Alpine/musl)
-ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
-ARG ZULU_VERSION=zulu25.32.17-ca-jdk25.0.2
-# hadolint ignore=DL4006
-RUN ARCH="$(uname -m)" \
+# Install s6-overlay and bashio (HA supervisor tooling)
+ARG S6_OVERLAY_VERSION=3.2.0.2
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+         curl \
+         xz-utils \
+         jq \
+    && rm -rf /var/lib/apt/lists/* \
+    && ARCH="$(dpkg --print-architecture)" \
     && case "$ARCH" in \
-         x86_64)  JDK_ARCH="x64" ;; \
-         aarch64) JDK_ARCH="aarch64" ;; \
+         amd64)   S6_ARCH="x86_64"   ;; \
+         arm64)   S6_ARCH="aarch64"  ;; \
          *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
        esac \
-    && curl -fsSL "https://cdn.azul.com/zulu/bin/${ZULU_VERSION}-linux_musl_${JDK_ARCH}.tar.gz" \
-       -o /tmp/jdk.tar.gz \
-    && mkdir -p "$JAVA_HOME" \
-    && tar -xzf /tmp/jdk.tar.gz -C "$JAVA_HOME" --strip-components=1 \
-    && rm /tmp/jdk.tar.gz \
-    && apk del curl
-
-COPY --from=stirling /app /app
-COPY --from=stirling /scripts /scripts
-COPY --from=stirling /configs /configs
-COPY --from=stirling /logs /logs
-COPY --from=stirling /pipeline /pipeline
-COPY --from=stirling /customFiles /customFiles
-COPY --from=stirling /usr/share/tesseract-ocr /usr/share/tesseract-ocr
+    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
+       | tar -C / -Jxp \
+    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" \
+       | tar -C / -Jxp \
+    && mkdir -p /usr/lib/bashio \
+    && curl -fsSL "https://github.com/hassio-addons/bashio/archive/refs/heads/main.tar.gz" \
+       | tar -C /usr/lib/bashio --strip-components=2 -xz bashio-main/lib \
+    && ln -sf /usr/lib/bashio/bashio /usr/bin/bashio \
+    && printf '#!/usr/bin/env bash\n. /usr/lib/bashio/bashio.sh\nexec "$@"\n' > /usr/bin/with-contenv \
+    && chmod +x /usr/bin/with-contenv \
+    && apt-get purge -y --auto-remove curl xz-utils
 
 COPY run.sh /run.sh
 COPY rootfs /
