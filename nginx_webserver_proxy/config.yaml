@@ -37,4 +37,5 @@ schema:
   static_site_prefix: str
   log_level: list(info|debug|warn|error)
 
+
 image: "ghcr.io/toledoem/nginx_webserver_proxy-{arch}"

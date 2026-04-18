@@ -7,6 +7,7 @@ on:
       - "manyfold_solo-*"
       - "stirling_pdf-*"
       - "stirling_pdf_full-*"
+      - "nginx_webserver_proxy-*"
 
 env:
   REGISTRY: ghcr.io
@@ -114,4 +115,30 @@ jobs:
             --amd64 \
             --aarch64 \
             -t stirling_pdf_full \
+            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+
+  nginx_webserver_proxy:
+    name: Build nginx_webserver_proxy
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref_name, 'nginx_webserver_proxy-')
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push nginx_webserver_proxy
+        uses: home-assistant/builder@2026.03.2
+        with:
+          args: |
+            --amd64 \
+            --aarch64 \
+            -t nginx_webserver_proxy \
             --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
