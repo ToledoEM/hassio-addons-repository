@@ -99,5 +99,9 @@ fi
 # Step 4: Hand off to NPM's own s6-overlay boot
 # ---------------------------------------------------------------------------
 log "static_site_root=${STATIC_ROOT} prefix=${STATIC_PREFIX} log_level=${LOG_LEVEL}"
+# NPM's prepare service requires /etc/letsencrypt to exist.
+# HA Supervisor maps the ssl volume there automatically; for other environments create it.
+mkdir -p /etc/letsencrypt
+
 log "Handing off to NPM: exec /init"
 exec /init
