@@ -11,3 +11,4 @@ sync-addons.sh
 release-addons.sh
 sync-addons.log
 release-addons.log
+addons.txt
