@@ -13,7 +13,7 @@ jobs:
       changedChangelogFiles: ${{ steps.find_changelog.outputs.changed_changelogs }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -60,7 +60,7 @@ jobs:
         addon: ${{ fromJSON(needs.check-addon-changes.outputs.changedAddons) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Run Home Assistant Add-on Lint
         uses: frenck/action-addon-linter@v2
@@ -79,7 +79,7 @@ jobs:
         arch: [amd64, aarch64]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Gather addon info
         id: information
