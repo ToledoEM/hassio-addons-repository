@@ -12,3 +12,7 @@ release-addons.sh
 sync-addons.log
 release-addons.log
 addons.txt
+
+# Local NPM proxy configs (personal, not for the repo)
+npm-*.json
+npm-*.md

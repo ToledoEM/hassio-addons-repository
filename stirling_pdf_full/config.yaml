@@ -1,7 +1,7 @@
 name: "Stirling-PDF Full"
 slug: stirling_pdf_full
 description: "Stirling-PDF with all features: OCR, LibreOffice conversion (PDF↔Word/PPT/RTF), Ghostscript, ImageMagick, and more. Larger image (~4 GB)."
-version: "2.9.2"
+version: "2.10.0"
 url: "https://github.com/ToledoEM/Stirling-PDF-HA_app/tree/main/stirling_pdf_full"
 arch:
   - amd64
