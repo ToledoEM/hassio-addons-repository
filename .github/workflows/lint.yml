@@ -14,6 +14,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  actions: read
 
 jobs:
   lint-changes:
@@ -127,19 +128,14 @@ jobs:
       - name: Remove Super-Linter output
         run: sudo rm -rf super-linter-output/
 
-      - name: Check for linting changes
-        id: changed
+      - name: Commit and push if changes
         run: |
-          if ! git diff --quiet; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          if git diff --quiet; then
+            echo "No changes detected"
+            exit 0
           fi
-
-      - name: Create pull request if fixes needed
-        if: steps.changed.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v6
-        with:
-          title: "bot: auto-fix linting issues"
-          commit-message: "fix: auto-fix linting issues"
-          branch-suffix: timestamp
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: auto-fix linting issues"
+          git push origin main

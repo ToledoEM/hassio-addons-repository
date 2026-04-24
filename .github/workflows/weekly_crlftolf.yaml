@@ -13,21 +13,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Find files with CRLF endings
-        uses: erclu/check-crlf@v1
-        id: check-crlf
-        with:
-          path: |
-            ./*
-            !.git
-            !*.png
-            !*.jpg
-            !*.bin
-
-      - name: Apply dos2unix to files with CRLF endings
+      - name: Find and fix CRLF endings
         run: |
-          for f in ${{ steps.check-crlf.outputs.files }}; do
-            dos2unix -k "$f"
+          find . -type f \
+            -not -path './.git/*' \
+            -not -name '*.png' \
+            -not -name '*.jpg' \
+            -not -name '*.bin' \
+            -exec grep -l $'\r' {} \; | while read file; do
+            dos2unix -k "$file"
+            echo "Fixed: $file"
           done
 
       - name: Commit if needed
