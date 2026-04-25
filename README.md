@@ -1,5 +1,7 @@
 # HA Addons Playground
 
+[![Build add-on images](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/build.yaml/badge.svg)](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/build.yaml)
+
 Experimental Home Assistant add-ons by toledoem for toledoem, feel free to try
 
 *dev versions most of the time, but not always*
