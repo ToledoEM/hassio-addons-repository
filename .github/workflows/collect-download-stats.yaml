@@ -33,10 +33,10 @@ jobs:
           import requests
           import csv
           import os
-          from datetime import datetime, timedelta
+          from datetime import datetime
 
-          REGISTRY = "ghcr.io"
           OWNER = "${{ github.repository_owner }}"
+          REPO = "${{ github.event.repository.name }}"
           PACKAGES = [
               "bentopdf",
               "manyfold_solo",
@@ -45,33 +45,30 @@ jobs:
               "nginx_webserver_proxy"
           ]
 
-          # GitHub API token for authentication
           TOKEN = "${{ secrets.GITHUB_TOKEN }}"
 
-          def get_package_stats(package_name):
-              """Fetch download count for a package from ghcr.io API"""
+          def get_release_downloads(package_name):
+              """Fetch download count from GitHub Releases for a specific package"""
               try:
-                  # Query using GitHub API for package information
-                  url = f"https://api.github.com/user/packages/container/{package_name}/versions"
-                  headers = {
-                      "Authorization": f"Bearer {TOKEN}",
-                      "Accept": "application/vnd.github+json",
-                      "X-GitHub-Api-Version": "2022-11-28"
-                  }
+                  url = f"https://api.github.com/repos/{OWNER}/{REPO}/releases"
+                  headers = {}
+                  if TOKEN:
+                      headers["Authorization"] = f"Bearer {TOKEN}"
+                  headers["Accept"] = "application/vnd.github+json"
 
                   response = requests.get(url, headers=headers)
-                  response.raise_for_status()
 
-                  versions = response.json()
-
-                  # Sum downloads across all versions
-                  total_downloads = 0
-                  for version in versions:
-                      # The download count is in the version data
-                      if "download_count" in version:
-                          total_downloads += version["download_count"]
-
-                  return total_downloads
+                  if response.status_code == 200:
+                      releases = response.json()
+                      total_downloads = 0
+                      for release in releases:
+                          if release["tag_name"].startswith(f"{package_name}-"):
+                              for asset in release.get("assets", []):
+                                  total_downloads += asset.get("download_count", 0)
+                      return total_downloads
+                  else:
+                      print(f"  Error: {response.status_code}")
+                      return 0
               except Exception as e:
                   print(f"Error fetching stats for {package_name}: {e}")
                   return 0
@@ -79,36 +76,27 @@ jobs:
           def append_to_csv(stats):
               """Append statistics to download_stats.csv"""
               csv_file = "download_stats.csv"
-
-              # Check if file exists to determine if we need headers
               file_exists = os.path.isfile(csv_file)
 
               with open(csv_file, 'a', newline='') as f:
                   writer = csv.writer(f)
-
-                  # Write header if file is new
                   if not file_exists:
                       writer.writerow(["date", "bentopdf", "manyfold_solo", "stirling_pdf", "stirling_pdf_full", "nginx_webserver_proxy"])
-
-                  # Write data row
                   row = [stats["date"]] + [stats[pkg] for pkg in PACKAGES]
                   writer.writerow(row)
 
           def main():
-              print("Collecting download statistics...")
-
-              stats = {
-                  "date": datetime.now().strftime("%Y-%m-%d")
-              }
+              print("Collecting download statistics from GitHub Releases...")
+              stats = {"date": datetime.now().strftime("%Y-%m-%d")}
 
               for package in PACKAGES:
                   print(f"Fetching stats for {package}...")
-                  downloads = get_package_stats(package)
+                  downloads = get_release_downloads(package)
                   stats[package] = downloads
                   print(f"  {package}: {downloads} downloads")
 
               append_to_csv(stats)
-              print(f"Stats appended to download_stats.csv")
+              print("Stats appended to download_stats.csv")
 
           if __name__ == "__main__":
               main()
@@ -123,9 +111,13 @@ jobs:
 
       - name: Display stats
         run: |
+          echo "=== Checking for CSV ==="
           if [ -f "download_stats.csv" ]; then
             echo "=== Download Statistics ==="
             cat download_stats.csv
+          else
+            echo "ERROR: download_stats.csv not found"
+            ls -la
           fi
 
       - name: Commit and push stats
