@@ -1,0 +1,142 @@
+name: Collect Weekly Download Stats
+
+on:
+  schedule:
+    # Run every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: read
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  collect-stats:
+    name: Collect download statistics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create stats collection script
+        run: |
+          cat > collect_stats.py << 'EOF'
+          #!/usr/bin/env python3
+          import json
+          import requests
+          import csv
+          import os
+          from datetime import datetime, timedelta
+
+          REGISTRY = "ghcr.io"
+          OWNER = "${{ github.repository_owner }}"
+          PACKAGES = [
+              "bentopdf",
+              "manyfold_solo",
+              "stirling_pdf",
+              "stirling_pdf_full",
+              "nginx_webserver_proxy"
+          ]
+
+          # GitHub API token for authentication
+          TOKEN = "${{ secrets.GITHUB_TOKEN }}"
+
+          def get_package_stats(package_name):
+              """Fetch download count for a package from ghcr.io API"""
+              try:
+                  # Query using GitHub API for package information
+                  url = f"https://api.github.com/user/packages/container/{package_name}/versions"
+                  headers = {
+                      "Authorization": f"Bearer {TOKEN}",
+                      "Accept": "application/vnd.github+json",
+                      "X-GitHub-Api-Version": "2022-11-28"
+                  }
+
+                  response = requests.get(url, headers=headers)
+                  response.raise_for_status()
+
+                  versions = response.json()
+
+                  # Sum downloads across all versions
+                  total_downloads = 0
+                  for version in versions:
+                      # The download count is in the version data
+                      if "download_count" in version:
+                          total_downloads += version["download_count"]
+
+                  return total_downloads
+              except Exception as e:
+                  print(f"Error fetching stats for {package_name}: {e}")
+                  return 0
+
+          def append_to_csv(stats):
+              """Append statistics to download_stats.csv"""
+              csv_file = "download_stats.csv"
+
+              # Check if file exists to determine if we need headers
+              file_exists = os.path.isfile(csv_file)
+
+              with open(csv_file, 'a', newline='') as f:
+                  writer = csv.writer(f)
+
+                  # Write header if file is new
+                  if not file_exists:
+                      writer.writerow(["date", "bentopdf", "manyfold_solo", "stirling_pdf", "stirling_pdf_full", "nginx_webserver_proxy"])
+
+                  # Write data row
+                  row = [stats["date"]] + [stats[pkg] for pkg in PACKAGES]
+                  writer.writerow(row)
+
+          def main():
+              print("Collecting download statistics...")
+
+              stats = {
+                  "date": datetime.now().strftime("%Y-%m-%d")
+              }
+
+              for package in PACKAGES:
+                  print(f"Fetching stats for {package}...")
+                  downloads = get_package_stats(package)
+                  stats[package] = downloads
+                  print(f"  {package}: {downloads} downloads")
+
+              append_to_csv(stats)
+              print(f"Stats appended to download_stats.csv")
+
+          if __name__ == "__main__":
+              main()
+          EOF
+        shell: bash
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run stats collection
+        run: python collect_stats.py
+
+      - name: Display stats
+        run: |
+          if [ -f "download_stats.csv" ]; then
+            echo "=== Download Statistics ==="
+            cat download_stats.csv
+          fi
+
+      - name: Commit and push stats
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if git diff --quiet download_stats.csv; then
+            echo "No changes to commit"
+          else
+            git add download_stats.csv
+            git commit -m "chore: update download stats"
+            git push
+          fi
