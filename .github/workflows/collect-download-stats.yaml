@@ -18,10 +18,10 @@ jobs:
     name: Collect download statistics
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
@@ -125,10 +125,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if git diff --quiet download_stats.csv; then
+          git add download_stats.csv
+
+          if git diff --quiet --cached download_stats.csv; then
             echo "No changes to commit"
           else
-            git add download_stats.csv
             git commit -m "chore: update download stats"
             git push
           fi
