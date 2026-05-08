@@ -1,4 +1,7 @@
 # Changelog
+## 0.139.2
+
+- Bumped upstream Manyfold image to `ghcr.io/manyfold3d/manyfold-solo:latest` for both `amd64` and `aarch64`.
 
 ## 0.139.1
 
