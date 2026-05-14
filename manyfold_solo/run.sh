@@ -245,6 +245,8 @@ chown_recursive_if_writable "$PUID:$PGID" "$DEFAULT_THUMBNAILS_PATH"
 chown_recursive_if_writable "$PUID:$PGID" "$LIBRARY_PATH"
 chown_recursive_if_writable "$PUID:$PGID" "$THUMBNAILS_PATH"
 
+export HOME="/config"
+
 log "Configuration summary:"
 log "  library_path=${LIBRARY_PATH}"
 log "  thumbnails_path=${THUMBNAILS_PATH}"

@@ -38,4 +38,5 @@ schema:
   log_level: list(info|debug|warn|error)
 
 
+
 image: "ghcr.io/toledoem/nginx_webserver_proxy-{arch}"
