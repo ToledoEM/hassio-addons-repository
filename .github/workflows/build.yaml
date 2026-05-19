@@ -8,6 +8,7 @@ on:
       - "stirling_pdf-*"
       - "stirling_pdf_full-*"
       - "nginx_webserver_proxy-*"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
