@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.141
+- This release adds a couple of new features, and a few bugfixes, as well as some internal refactoring and improved tests. You can now set a preferred "landing page", like "my models" or "all creators", as well as the current "dashboard" - and that can be site-wide, or per-user. And, due to some of that internal refactoring, we now have syntax highlighting for some text files (e.g. Javascript).
+- Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.141.0
+
 ## 0.140.1
 - A small bugfix release for a couple of errors recently introduced in the metadata parsing.
 - Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.140.1
