@@ -62,7 +62,15 @@ export HOME="${HOME:-/root}"
 
 # Cap JVM heap — upstream dynamic calc uses 70% of host RAM which OOMs on HA.
 # JAVA_BASE_OPTS is read by /scripts/init-without-ocr.sh before building JAVA_TOOL_OPTIONS.
-export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms128m -Xmx512m -XX:MaxMetaspaceSize=192m -XX:MaxRAMPercentage=12"
+# Compute JVM heap dynamically from available container memory.
+# Uses 40% for heap (Xmx) and 15% for metaspace, with floors to stay stable.
+_total_mb=$(awk '/MemTotal/ { printf "%d", $2/1024 }' /proc/meminfo)
+_xmx_mb=$(( _total_mb * 40 / 100 ))
+_meta_mb=$(( _total_mb * 15 / 100 ))
+[[ $_xmx_mb -lt 256 ]]  && _xmx_mb=256
+[[ $_meta_mb -lt 128 ]] && _meta_mb=128
+log "Detected ${_total_mb}MB RAM → JVM Xmx=${_xmx_mb}m MaxMetaspace=${_meta_mb}m"
+export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms128m -Xmx${_xmx_mb}m -XX:MaxMetaspaceSize=${_meta_mb}m"
 
 log "Configuration summary:"
 log "  enable_login=${ENABLE_LOGIN}"
@@ -72,6 +80,11 @@ log "  configs=${CONFIGS_DIR}"
 log "  tessdata=${TESSDATA_DIR}"
 log "  logs=${LOGS_DIR}"
 log "  pipeline=${PIPELINE_DIR}"
+
+# Kill any stale unoserver/soffice left over from a previous crash before restarting
+pkill -f "unoserver" 2>/dev/null || true
+pkill -f "soffice"   2>/dev/null || true
+sleep 1
 
 # Delegate to upstream init script which handles java startup correctly
 log "Starting Stirling-PDF via /scripts/init.sh"

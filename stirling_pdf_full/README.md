@@ -22,6 +22,16 @@ For a lighter install without OCR or Office conversion, see **[Stirling-PDF](../
 | **PDF → HTML / Markdown (pdftohtml)** | ✗ | ✓ |
 | **Image size** | ~600 MB | ~4 GB |
 
+## Requirements
+
+| | Minimum | Recommended |
+|---|---|---|
+| **RAM** | 4 GB | 6 GB+ |
+| **Storage** | 4.5 GB | — |
+| **Arch** | amd64, aarch64 | — |
+
+> The add-on enforces a 4 GB container memory limit and sizes the JVM heap dynamically to 40% of available RAM. LibreOffice + unoserver require significant memory on top of the JVM — running on a host with less than 4 GB free will cause startup failures or OOM kills.
+
 ## Installation
 
 1. Go to **Settings → Add-ons → Add-on Store** in Home Assistant.

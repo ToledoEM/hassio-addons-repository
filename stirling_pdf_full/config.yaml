@@ -21,6 +21,8 @@ map:
   - share:rw
   - media:rw
 
+memory: 4096
+
 options:
   enable_login: false
   langs: "en_GB"

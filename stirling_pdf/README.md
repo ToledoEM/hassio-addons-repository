@@ -26,6 +26,16 @@
 - HTML / URL / Markdown → PDF (Weasyprint)
 - PDF → HTML / Markdown (pdftohtml)
 
+## Requirements
+
+| | Minimum | Recommended |
+|---|---|---|
+| **RAM** | 2 GB | 4 GB |
+| **Storage** | 700 MB | — |
+| **Arch** | amd64, aarch64 | — |
+
+> The add-on enforces a 2 GB container memory limit and sizes the JVM heap dynamically to 40% of available RAM. Running on a host with less than 2 GB free will cause startup failures.
+
 ## Installation
 
 1. Go to **Settings → Add-ons → Add-on Store** in Home Assistant.
