@@ -3,17 +3,12 @@ FROM stirlingtools/stirling-pdf:latest-ultra-lite
 
 # Install s6-overlay and bashio (HA supervisor tooling)
 ARG S6_OVERLAY_VERSION=3.2.0.2
-# hadolint ignore=DL3008
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-         curl \
-         xz-utils \
-         jq \
-    && rm -rf /var/lib/apt/lists/* \
-    && ARCH="$(dpkg --print-architecture)" \
+# hadolint ignore=DL3018
+RUN apk add --no-cache curl xz jq \
+    && ARCH="$(apk --print-arch)" \
     && case "$ARCH" in \
-         amd64)   S6_ARCH="x86_64"   ;; \
-         arm64)   S6_ARCH="aarch64"  ;; \
+         x86_64)  S6_ARCH="x86_64"   ;; \
+         aarch64) S6_ARCH="aarch64"  ;; \
          *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
        esac \
     && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
@@ -26,7 +21,7 @@ RUN apt-get update \
     && ln -sf /usr/lib/bashio/bashio /usr/bin/bashio \
     && printf '#!/usr/bin/env bash\n. /usr/lib/bashio/bashio.sh\nexec "$@"\n' > /usr/bin/with-contenv \
     && chmod +x /usr/bin/with-contenv \
-    && apt-get purge -y --auto-remove curl xz-utils
+    && apk del curl xz
 
 COPY run.sh /run.sh
 COPY rootfs /
