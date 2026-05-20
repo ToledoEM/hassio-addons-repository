@@ -7,11 +7,11 @@ DEFAULT_LANGS="en_GB"
 DEFAULT_LOG_LEVEL="info"
 
 log() {
-  echo "[stirling-pdf-addon] $*"
+  echo "[stirling-pdf-ultra-lite-addon] $*"
 }
 
 die() {
-  echo "[stirling-pdf-addon] ERROR: $*" >&2
+  echo "[stirling-pdf-ultra-lite-addon] ERROR: $*" >&2
   exit 1
 }
 
@@ -27,10 +27,10 @@ LANGS="$(read_opt langs)";               LANGS="${LANGS:-$DEFAULT_LANGS}"
 LOG_LEVEL="$(read_opt log_level)";       LOG_LEVEL="${LOG_LEVEL:-$DEFAULT_LOG_LEVEL}"
 
 # Persistent directories on HA mapped volumes
-CONFIGS_DIR="/config/stirling_pdf/configs"
-LOGS_DIR="/config/stirling_pdf/logs"
-TESSDATA_DIR="/share/stirling_pdf/tessdata"
-PIPELINE_DIR="/share/stirling_pdf/pipeline"
+CONFIGS_DIR="/config/stirling_pdf_ultra_lite/configs"
+LOGS_DIR="/config/stirling_pdf_ultra_lite/logs"
+TESSDATA_DIR="/share/stirling_pdf_ultra_lite/tessdata"
+PIPELINE_DIR="/share/stirling_pdf_ultra_lite/pipeline"
 
 mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$TESSDATA_DIR" "$PIPELINE_DIR"
 
@@ -67,10 +67,10 @@ export HOME="${HOME:-/root}"
 _total_mb=$(awk '/MemTotal/ { printf "%d", $2/1024 }' /proc/meminfo)
 _xmx_mb=$(( _total_mb * 40 / 100 ))
 _meta_mb=$(( _total_mb * 15 / 100 ))
-[[ $_xmx_mb -lt 256 ]]  && _xmx_mb=256
-[[ $_meta_mb -lt 128 ]] && _meta_mb=128
+[[ $_xmx_mb -lt 128 ]]  && _xmx_mb=128
+[[ $_meta_mb -lt 64 ]]  && _meta_mb=64
 log "Detected ${_total_mb}MB RAM → JVM Xmx=${_xmx_mb}m MaxMetaspace=${_meta_mb}m"
-export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms128m -Xmx${_xmx_mb}m -XX:MaxMetaspaceSize=${_meta_mb}m"
+export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms64m -Xmx${_xmx_mb}m -XX:MaxMetaspaceSize=${_meta_mb}m"
 
 log "Configuration summary:"
 log "  enable_login=${ENABLE_LOGIN}"
@@ -87,6 +87,6 @@ pkill -f "soffice"   2>/dev/null || true
 sleep 1
 
 # Delegate to upstream init script which handles java startup correctly
-log "Starting Stirling-PDF via /scripts/init.sh"
+log "Starting Stirling-PDF Ultra-Lite via /scripts/init.sh"
 cd /app
 exec /scripts/init.sh

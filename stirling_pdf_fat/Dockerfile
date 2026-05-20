@@ -31,8 +31,8 @@ COPY run.sh /run.sh
 COPY rootfs /
 
 RUN chmod +x /run.sh \
-    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_full/run \
-    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_full/finish
+    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_fat/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_fat/finish
 
 ARG BUILD_VERSION
 LABEL \

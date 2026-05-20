@@ -1,6 +1,6 @@
 #include <tunables/global>
 
-profile hassio-addons/stirling_pdf flags=(attach_disconnected,mediate_deleted) {
+profile hassio-addons/stirling_pdf_ultra_lite flags=(attach_disconnected,mediate_deleted) {
   #include <abstractions/base>
   #include <abstractions/bash>
   #include <abstractions/nameservice>

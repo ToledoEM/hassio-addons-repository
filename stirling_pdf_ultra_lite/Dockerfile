@@ -1,5 +1,5 @@
 # hadolint ignore=DL3007
-FROM stirlingtools/stirling-pdf:latest
+FROM stirlingtools/stirling-pdf:latest-ultra-lite
 
 # Install s6-overlay and bashio (HA supervisor tooling)
 ARG S6_OVERLAY_VERSION=3.2.0.2
@@ -32,8 +32,8 @@ COPY run.sh /run.sh
 COPY rootfs /
 
 RUN chmod +x /run.sh \
-    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf/run \
-    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf/finish
+    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_ultra_lite/run \
+    && chmod +x /etc/s6-overlay/s6-rc.d/stirling_pdf_ultra_lite/finish
 
 ARG BUILD_VERSION
 LABEL \

@@ -7,11 +7,11 @@ DEFAULT_LANGS="en_GB"
 DEFAULT_LOG_LEVEL="info"
 
 log() {
-  echo "[stirling-pdf-full-addon] $*"
+  echo "[stirling-pdf-fat-addon] $*"
 }
 
 die() {
-  echo "[stirling-pdf-full-addon] ERROR: $*" >&2
+  echo "[stirling-pdf-fat-addon] ERROR: $*" >&2
   exit 1
 }
 
@@ -27,10 +27,10 @@ LANGS="$(read_opt langs)";               LANGS="${LANGS:-$DEFAULT_LANGS}"
 LOG_LEVEL="$(read_opt log_level)";       LOG_LEVEL="${LOG_LEVEL:-$DEFAULT_LOG_LEVEL}"
 
 # Persistent directories on HA mapped volumes
-CONFIGS_DIR="/config/stirling_pdf_full/configs"
-LOGS_DIR="/config/stirling_pdf_full/logs"
-TESSDATA_DIR="/share/stirling_pdf_full/tessdata"
-PIPELINE_DIR="/share/stirling_pdf_full/pipeline"
+CONFIGS_DIR="/config/stirling_pdf_fat/configs"
+LOGS_DIR="/config/stirling_pdf_fat/logs"
+TESSDATA_DIR="/share/stirling_pdf_fat/tessdata"
+PIPELINE_DIR="/share/stirling_pdf_fat/pipeline"
 
 mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$TESSDATA_DIR" "$PIPELINE_DIR"
 
@@ -85,6 +85,6 @@ pkill -f "soffice"   2>/dev/null || true
 sleep 1
 
 # Delegate to upstream init script which handles java startup correctly
-log "Starting Stirling-PDF Full via /scripts/init.sh"
+log "Starting Stirling-PDF Fat via /scripts/init.sh"
 cd /app
 exec /scripts/init.sh
