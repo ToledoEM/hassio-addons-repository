@@ -48,4 +48,5 @@ schema:
 
 
 
+
 image: "ghcr.io/toledoem/nginx_webserver_proxy-{arch}"
