@@ -22,7 +22,7 @@ COPY --from=ha-tools /usr/lib/bashio /usr/lib/bashio
 # hadolint ignore=DL3018
 RUN apk add --no-cache jq
 
-RUN mkdir -p /logs /configs /pipeline /usr/share/tesseract-ocr/5/tessdata
+RUN mkdir -p /logs /configs /pipeline /usr/share/tesseract-ocr/5
 
 COPY run.sh /run.sh
 COPY rootfs /
