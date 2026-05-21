@@ -44,7 +44,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' bentopdf/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' bentopdf/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
@@ -112,7 +112,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' manyfold_solo/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' manyfold_solo/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
@@ -180,7 +180,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' stirling_pdf_fat/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' stirling_pdf_fat/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
@@ -248,7 +248,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' stirling_pdf_full/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' stirling_pdf_full/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
@@ -316,7 +316,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' stirling_pdf_ultra_lite/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' stirling_pdf_ultra_lite/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
@@ -386,7 +386,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(grep '^version:' nginx_webserver_proxy/config.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' nginx_webserver_proxy/config.yaml | awk '{print $2}' | tr -d '"')
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
       - name: Build matrix
         id: matrix
