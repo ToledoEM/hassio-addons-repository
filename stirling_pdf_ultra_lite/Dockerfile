@@ -1,32 +1,25 @@
 # hadolint ignore=DL3007
-FROM stirlingtools/stirling-pdf:latest-ultra-lite
+ARG BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
 
-# Install s6-overlay and bashio (HA supervisor tooling)
-ARG S6_OVERLAY_VERSION=3.2.0.2
-# hadolint ignore=DL3008
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-         curl \
-         xz-utils \
-         jq \
-    && rm -rf /var/lib/apt/lists/* \
-    && ARCH="$(dpkg --print-architecture)" \
-    && case "$ARCH" in \
-         amd64)   S6_ARCH="x86_64"   ;; \
-         arm64)   S6_ARCH="aarch64"  ;; \
-         *) echo "Unsupported arch: $ARCH"; exit 1 ;; \
-       esac \
-    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz" \
-       | tar -C / -Jxp \
-    && curl -fsSL "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz" \
-       | tar -C / -Jxp \
-    && mkdir -p /usr/lib/bashio \
-    && curl -fsSL "https://github.com/hassio-addons/bashio/archive/refs/heads/main.tar.gz" \
-       | tar -C /usr/lib/bashio --strip-components=2 -xz bashio-main/lib \
-    && ln -sf /usr/lib/bashio/bashio /usr/bin/bashio \
-    && printf '#!/usr/bin/env bash\n. /usr/lib/bashio/bashio.sh\nexec "$@"\n' > /usr/bin/with-contenv \
-    && chmod +x /usr/bin/with-contenv \
-    && apt-get purge -y --auto-remove curl xz-utils
+# Stage 1: pull s6-overlay + bashio from HA base (avoids curl downloads at build time)
+# hadolint ignore=DL3007
+FROM ghcr.io/home-assistant/amd64-base:3.23 AS ha-tools
+
+# Stage 2: actual image
+# hadolint ignore=DL3007
+FROM ${BUILD_FROM}
+
+COPY --from=ha-tools /init /init
+COPY --from=ha-tools /command /command
+COPY --from=ha-tools /package /package
+COPY --from=ha-tools /etc/s6-overlay /etc/s6-overlay
+COPY --from=ha-tools /usr/bin/bashio /usr/bin/bashio
+COPY --from=ha-tools /usr/bin/with-contenv /usr/bin/with-contenv
+COPY --from=ha-tools /usr/lib/bashio /usr/lib/bashio
+
+# Install jq only
+# hadolint ignore=DL3018
+RUN apk add --no-cache jq
 
 COPY run.sh /run.sh
 COPY rootfs /
