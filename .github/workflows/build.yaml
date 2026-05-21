@@ -76,6 +76,7 @@ jobs:
           image-tags: ${{ needs.bentopdf-init.outputs.version }}
           version: ${{ needs.bentopdf-init.outputs.version }}
           build-args: BUILD_FROM=${{ fromJSON('{"amd64":"ghcr.io/home-assistant/amd64-base:3.23","aarch64":"ghcr.io/home-assistant/aarch64-base:3.23"}')[matrix.arch] }}
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -143,6 +144,7 @@ jobs:
           image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
           version: ${{ needs.manyfold_solo-init.outputs.version }}
           build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:latest
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -210,6 +212,7 @@ jobs:
           image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
           version: ${{ needs.stirling_pdf_fat-init.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-fat
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -277,6 +280,7 @@ jobs:
           image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
           version: ${{ needs.stirling_pdf_full-init.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -346,6 +350,7 @@ jobs:
           build-args: |
             BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
             HA_BASE=${{ matrix.arch == 'amd64' && 'ghcr.io/home-assistant/amd64-base:3.23' || 'ghcr.io/home-assistant/aarch64-base:3.23' }}
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -413,6 +418,7 @@ jobs:
           image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
           version: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
           build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
+          cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
