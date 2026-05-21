@@ -52,7 +52,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: bentopdf
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   bentopdf-build:
     name: bentopdf / build ${{ matrix.arch }}
@@ -93,7 +93,7 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: bentopdf
           image-tags: ${{ needs.bentopdf-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
   # ── manyfold_solo ────────────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: manyfold_solo
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   manyfold_solo-build:
     name: manyfold_solo / build ${{ matrix.arch }}
@@ -160,7 +160,7 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: manyfold_solo
           image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
   # ── stirling_pdf_fat ─────────────────────────────────────────────────────────
@@ -186,7 +186,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_fat
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   stirling_pdf_fat-build:
     name: stirling_pdf_fat / build ${{ matrix.arch }}
@@ -227,7 +227,7 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_fat
           image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
   # ── stirling_pdf_full ────────────────────────────────────────────────────────
@@ -253,7 +253,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_full
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   stirling_pdf_full-build:
     name: stirling_pdf_full / build ${{ matrix.arch }}
@@ -294,7 +294,7 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_full
           image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
   # ── stirling_pdf_ultra_lite ──────────────────────────────────────────────────
@@ -320,7 +320,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_ultra_lite
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   stirling_pdf_ultra_lite-build:
     name: stirling_pdf_ultra_lite / build ${{ matrix.arch }}
@@ -363,7 +363,7 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: stirling_pdf_ultra_lite
           image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
   # ── nginx_webserver_proxy ────────────────────────────────────────────────────
@@ -389,7 +389,7 @@ jobs:
         with:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: nginx_webserver_proxy
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
 
   nginx_webserver_proxy-build:
     name: nginx_webserver_proxy / build ${{ matrix.arch }}
@@ -430,5 +430,5 @@ jobs:
           architectures: ${{ env.ARCHITECTURES }}
           image-name: nginx_webserver_proxy
           image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
-          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
