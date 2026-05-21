@@ -1,9 +1,10 @@
 # hadolint ignore=DL3007
 ARG BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
+ARG HA_BASE=ghcr.io/home-assistant/amd64-base:3.23
 
 # Stage 1: pull s6-overlay + bashio from HA base (avoids curl downloads at build time)
 # hadolint ignore=DL3007
-FROM ghcr.io/home-assistant/amd64-base:3.23 AS ha-tools
+FROM ${HA_BASE} AS ha-tools
 
 # Stage 2: actual image
 # hadolint ignore=DL3007

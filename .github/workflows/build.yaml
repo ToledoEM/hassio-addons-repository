@@ -26,172 +26,409 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  ARCHITECTURES: '["amd64", "aarch64"]'
 
 jobs:
-  bentopdf:
-    name: Build bentopdf
+  # ── bentopdf ────────────────────────────────────────────────────────────────
+  bentopdf-init:
+    name: bentopdf / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'bentopdf-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'bentopdf'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' bentopdf/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: bentopdf
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push bentopdf
-        uses: home-assistant/builder@2026.03.2
+  bentopdf-build:
+    name: bentopdf / build ${{ matrix.arch }}
+    needs: bentopdf-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.bentopdf-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push bentopdf (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t bentopdf \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: bentopdf
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.bentopdf-init.outputs.version }}
+          version: ${{ needs.bentopdf-init.outputs.version }}
+          build-args: BUILD_FROM=${{ fromJSON('{"amd64":"ghcr.io/home-assistant/amd64-base:3.23","aarch64":"ghcr.io/home-assistant/aarch64-base:3.23"}')[matrix.arch] }}
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  manyfold_solo:
-    name: Build manyfold_solo
+  bentopdf-manifest:
+    name: bentopdf / publish manifest
+    needs: [bentopdf-init, bentopdf-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: bentopdf
+          image-tags: ${{ needs.bentopdf-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── manyfold_solo ────────────────────────────────────────────────────────────
+  manyfold_solo-init:
+    name: manyfold_solo / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'manyfold_solo-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'manyfold_solo'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' manyfold_solo/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: manyfold_solo
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push manyfold_solo
-        uses: home-assistant/builder@2026.03.2
+  manyfold_solo-build:
+    name: manyfold_solo / build ${{ matrix.arch }}
+    needs: manyfold_solo-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.manyfold_solo-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push manyfold_solo (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t manyfold_solo \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: manyfold_solo
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
+          version: ${{ needs.manyfold_solo-init.outputs.version }}
+          build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:latest
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_fat:
-    name: Build stirling_pdf_fat
+  manyfold_solo-manifest:
+    name: manyfold_solo / publish manifest
+    needs: [manyfold_solo-init, manyfold_solo-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: manyfold_solo
+          image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── stirling_pdf_fat ─────────────────────────────────────────────────────────
+  stirling_pdf_fat-init:
+    name: stirling_pdf_fat / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'stirling_pdf_fat-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_fat'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' stirling_pdf_fat/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_fat
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push stirling_pdf_fat
-        uses: home-assistant/builder@2026.03.2
+  stirling_pdf_fat-build:
+    name: stirling_pdf_fat / build ${{ matrix.arch }}
+    needs: stirling_pdf_fat-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.stirling_pdf_fat-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push stirling_pdf_fat (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t stirling_pdf_fat \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: stirling_pdf_fat
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
+          version: ${{ needs.stirling_pdf_fat-init.outputs.version }}
+          build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-fat
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_full:
-    name: Build stirling_pdf_full
+  stirling_pdf_fat-manifest:
+    name: stirling_pdf_fat / publish manifest
+    needs: [stirling_pdf_fat-init, stirling_pdf_fat-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_fat
+          image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── stirling_pdf_full ────────────────────────────────────────────────────────
+  stirling_pdf_full-init:
+    name: stirling_pdf_full / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'stirling_pdf_full-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_full'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' stirling_pdf_full/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_full
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push stirling_pdf_full
-        uses: home-assistant/builder@2026.03.2
+  stirling_pdf_full-build:
+    name: stirling_pdf_full / build ${{ matrix.arch }}
+    needs: stirling_pdf_full-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.stirling_pdf_full-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push stirling_pdf_full (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t stirling_pdf_full \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: stirling_pdf_full
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
+          version: ${{ needs.stirling_pdf_full-init.outputs.version }}
+          build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_ultra_lite:
-    name: Build stirling_pdf_ultra_lite
+  stirling_pdf_full-manifest:
+    name: stirling_pdf_full / publish manifest
+    needs: [stirling_pdf_full-init, stirling_pdf_full-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_full
+          image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── stirling_pdf_ultra_lite ──────────────────────────────────────────────────
+  stirling_pdf_ultra_lite-init:
+    name: stirling_pdf_ultra_lite / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'stirling_pdf_ultra_lite-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_ultra_lite'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' stirling_pdf_ultra_lite/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_ultra_lite
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push stirling_pdf_ultra_lite
-        uses: home-assistant/builder@2026.03.2
+  stirling_pdf_ultra_lite-build:
+    name: stirling_pdf_ultra_lite / build ${{ matrix.arch }}
+    needs: stirling_pdf_ultra_lite-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.stirling_pdf_ultra_lite-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push stirling_pdf_ultra_lite (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t stirling_pdf_ultra_lite \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: stirling_pdf_ultra_lite
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
+          version: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
+          build-args: |
+            BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
+            HA_BASE=${{ matrix.arch == 'amd64' && 'ghcr.io/home-assistant/amd64-base:3.23' || 'ghcr.io/home-assistant/aarch64-base:3.23' }}
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  nginx_webserver_proxy:
-    name: Build nginx_webserver_proxy
+  stirling_pdf_ultra_lite-manifest:
+    name: stirling_pdf_ultra_lite / publish manifest
+    needs: [stirling_pdf_ultra_lite-init, stirling_pdf_ultra_lite-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: stirling_pdf_ultra_lite
+          image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  # ── nginx_webserver_proxy ────────────────────────────────────────────────────
+  nginx_webserver_proxy-init:
+    name: nginx_webserver_proxy / init matrix
     runs-on: ubuntu-latest
     if: |
       startsWith(github.ref_name, 'nginx_webserver_proxy-') ||
       (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v5
-
-      - name: Login to ghcr.io
-        uses: docker/login-action@v3
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep '^version:' nginx_webserver_proxy/config.yaml | awk '{print $2}')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+      - name: Build matrix
+        id: matrix
+        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: nginx_webserver_proxy
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
 
-      - name: Build and push nginx_webserver_proxy
-        uses: home-assistant/builder@2026.03.2
+  nginx_webserver_proxy-build:
+    name: nginx_webserver_proxy / build ${{ matrix.arch }}
+    needs: nginx_webserver_proxy-init
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      id-token: write
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.nginx_webserver_proxy-init.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build and push nginx_webserver_proxy (${{ matrix.arch }})
+        uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
-          args: |
-            --amd64 \
-            --aarch64 \
-            -t nginx_webserver_proxy \
-            --docker-hub ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          arch: ${{ matrix.arch }}
+          context: nginx_webserver_proxy
+          image: ${{ matrix.image }}
+          image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
+          version: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
+          build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+  nginx_webserver_proxy-manifest:
+    name: nginx_webserver_proxy / publish manifest
+    needs: [nginx_webserver_proxy-init, nginx_webserver_proxy-build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      packages: write
+    steps:
+      - name: Publish multi-arch manifest
+        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
+        with:
+          architectures: ${{ env.ARCHITECTURES }}
+          image-name: nginx_webserver_proxy
+          image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
+          registry-prefix: ${{ env.REGISTRY }}/${{ github.repository_owner }}
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
