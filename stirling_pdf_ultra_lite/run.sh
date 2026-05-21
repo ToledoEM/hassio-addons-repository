@@ -84,6 +84,6 @@ pkill -f "soffice"   2>/dev/null || true
 sleep 1
 
 # Delegate to upstream init script which handles java startup correctly
-log "Starting Stirling-PDF Ultra-Lite via /scripts/init.sh"
+log "Starting Stirling-PDF Ultra-Lite via /scripts/init-without-ocr.sh"
 cd /app
-exec /scripts/init.sh
+exec /scripts/init-without-ocr.sh
