@@ -84,6 +84,7 @@ pkill -f "soffice"   2>/dev/null || true
 sleep 1
 
 # Delegate to upstream init script which handles java startup correctly
+# Must cd to / so Spring Boot resolves ./configs, ./logs, ./pipeline as absolute paths
 log "Starting Stirling-PDF Ultra-Lite via /scripts/init-without-ocr.sh"
-cd /app
+cd /
 exec /scripts/init-without-ocr.sh
