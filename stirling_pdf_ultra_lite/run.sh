@@ -29,17 +29,15 @@ LOG_LEVEL="$(read_opt log_level)";       LOG_LEVEL="${LOG_LEVEL:-$DEFAULT_LOG_LE
 # Persistent directories on HA mapped volumes
 CONFIGS_DIR="/config/stirling_pdf_ultra_lite/configs"
 LOGS_DIR="/config/stirling_pdf_ultra_lite/logs"
-TESSDATA_DIR="/share/stirling_pdf_ultra_lite/tessdata"
 PIPELINE_DIR="/share/stirling_pdf_ultra_lite/pipeline"
 
-mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$TESSDATA_DIR" "$PIPELINE_DIR"
+mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$PIPELINE_DIR"
 
 # Symlink HA persistent paths → Stirling-PDF expected paths
 # (only if not already linked to a persistent location)
 for pair in \
   "${CONFIGS_DIR}:/configs" \
   "${LOGS_DIR}:/logs" \
-  "${TESSDATA_DIR}:/usr/share/tesseract-ocr/5/tessdata" \
   "${PIPELINE_DIR}:/pipeline"
 do
   src="${pair%%:*}"
@@ -77,7 +75,6 @@ log "  enable_login=${ENABLE_LOGIN}"
 log "  langs=${LANGS}"
 log "  log_level=${LOG_LEVEL}"
 log "  configs=${CONFIGS_DIR}"
-log "  tessdata=${TESSDATA_DIR}"
 log "  logs=${LOGS_DIR}"
 log "  pipeline=${PIPELINE_DIR}"
 
