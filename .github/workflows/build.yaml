@@ -1,3 +1,5 @@
+# yamllint disable rule:line-length
+---
 name: Build add-on images
 
 on:
@@ -30,477 +32,126 @@ on:
           - stirling_pdf_ultra_lite
           - nginx_webserver_proxy
 
-env:
-  REGISTRY: ghcr.io
-  ARCHITECTURES: '["amd64", "aarch64"]'
-
 jobs:
-  # ── bentopdf ────────────────────────────────────────────────────────────────
-  bentopdf-init:
-    name: bentopdf / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'bentopdf-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'bentopdf'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' bentopdf/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: bentopdf
-          registry-prefix: ghcr.io/toledoem
-
-  bentopdf-build:
-    name: bentopdf / build ${{ matrix.arch }}
-    needs: bentopdf-init
-    runs-on: ${{ matrix.os }}
+  build:
+    name: ${{ matrix.addon }} / ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
-      id-token: write
       packages: write
+    if: |
+      startsWith(github.ref_name, matrix.addon) ||
+      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == matrix.addon))
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.bentopdf-init.outputs.matrix) }}
+      matrix:
+        addon:
+          - bentopdf
+          - manyfold_solo
+          - stirling_pdf_fat
+          - stirling_pdf_full
+          - stirling_pdf_ultra_lite
+          - nginx_webserver_proxy
+        arch:
+          - amd64
+          - aarch64
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v5
-      - name: Build and push bentopdf (${{ matrix.arch }})
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Read add-on metadata
+        id: meta
+        run: |
+          VERSION=$(grep '^version:' ${{ matrix.addon }}/config.yaml | awk '{print $2}' | tr -d '"')
+          IMAGE=$(grep '^image:' ${{ matrix.addon }}/config.yaml | awk '{print $2}' | tr -d '"' | sed 's/{arch}/${{ matrix.arch }}/g')
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push bentopdf
+        if: matrix.addon == 'bentopdf'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: bentopdf
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.bentopdf-init.outputs.version }}
-          version: ${{ needs.bentopdf-init.outputs.version }}
-          build-args: BUILD_FROM=${{ fromJSON('{"amd64":"ghcr.io/home-assistant/amd64-base:3.23","aarch64":"ghcr.io/home-assistant/aarch64-base:3.23"}')[matrix.arch] }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base:3.23
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  bentopdf-manifest:
-    name: bentopdf / publish manifest
-    needs: [bentopdf-init, bentopdf-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: bentopdf
-          image-tags: ${{ needs.bentopdf-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (bentopdf-amd64, bentopdf-aarch64)
-        run: |
-          VERSION="${{ needs.bentopdf-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-bentopdf:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-bentopdf:${VERSION} ghcr.io/toledoem/bentopdf-amd64:${VERSION}
-          docker push ghcr.io/toledoem/bentopdf-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-bentopdf:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-bentopdf:${VERSION} ghcr.io/toledoem/bentopdf-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/bentopdf-aarch64:${VERSION}
-
-  # ── manyfold_solo ────────────────────────────────────────────────────────────
-  manyfold_solo-init:
-    name: manyfold_solo / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'manyfold_solo-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'manyfold_solo'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' manyfold_solo/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: manyfold_solo
-          registry-prefix: ghcr.io/toledoem
-
-  manyfold_solo-build:
-    name: manyfold_solo / build ${{ matrix.arch }}
-    needs: manyfold_solo-init
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.manyfold_solo-init.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Build and push manyfold_solo (${{ matrix.arch }})
+      - name: Build and push manyfold_solo
+        if: matrix.addon == 'manyfold_solo'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: manyfold_solo
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
-          version: ${{ needs.manyfold_solo-init.outputs.version }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:latest
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  manyfold_solo-manifest:
-    name: manyfold_solo / publish manifest
-    needs: [manyfold_solo-init, manyfold_solo-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: manyfold_solo
-          image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (manyfold_solo-amd64, manyfold_solo-aarch64)
-        run: |
-          VERSION="${{ needs.manyfold_solo-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-manyfold_solo:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-manyfold_solo:${VERSION} ghcr.io/toledoem/manyfold_solo-amd64:${VERSION}
-          docker push ghcr.io/toledoem/manyfold_solo-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-manyfold_solo:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-manyfold_solo:${VERSION} ghcr.io/toledoem/manyfold_solo-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/manyfold_solo-aarch64:${VERSION}
-
-  # ── stirling_pdf_fat ─────────────────────────────────────────────────────────
-  stirling_pdf_fat-init:
-    name: stirling_pdf_fat / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'stirling_pdf_fat-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_fat'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' stirling_pdf_fat/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_fat
-          registry-prefix: ghcr.io/toledoem
-
-  stirling_pdf_fat-build:
-    name: stirling_pdf_fat / build ${{ matrix.arch }}
-    needs: stirling_pdf_fat-init
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.stirling_pdf_fat-init.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Build and push stirling_pdf_fat (${{ matrix.arch }})
+      - name: Build and push stirling_pdf_fat
+        if: matrix.addon == 'stirling_pdf_fat'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: stirling_pdf_fat
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
-          version: ${{ needs.stirling_pdf_fat-init.outputs.version }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-fat
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_fat-manifest:
-    name: stirling_pdf_fat / publish manifest
-    needs: [stirling_pdf_fat-init, stirling_pdf_fat-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_fat
-          image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (stirling_pdf_fat-amd64, stirling_pdf_fat-aarch64)
-        run: |
-          VERSION="${{ needs.stirling_pdf_fat-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-stirling_pdf_fat:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-stirling_pdf_fat:${VERSION} ghcr.io/toledoem/stirling_pdf_fat-amd64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_fat-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_fat:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_fat:${VERSION} ghcr.io/toledoem/stirling_pdf_fat-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_fat-aarch64:${VERSION}
-
-  # ── stirling_pdf_full ────────────────────────────────────────────────────────
-  stirling_pdf_full-init:
-    name: stirling_pdf_full / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'stirling_pdf_full-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_full'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' stirling_pdf_full/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_full
-          registry-prefix: ghcr.io/toledoem
-
-  stirling_pdf_full-build:
-    name: stirling_pdf_full / build ${{ matrix.arch }}
-    needs: stirling_pdf_full-init
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.stirling_pdf_full-init.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Build and push stirling_pdf_full (${{ matrix.arch }})
+      - name: Build and push stirling_pdf_full
+        if: matrix.addon == 'stirling_pdf_full'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: stirling_pdf_full
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
-          version: ${{ needs.stirling_pdf_full-init.outputs.version }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_full-manifest:
-    name: stirling_pdf_full / publish manifest
-    needs: [stirling_pdf_full-init, stirling_pdf_full-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_full
-          image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (stirling_pdf_full-amd64, stirling_pdf_full-aarch64)
-        run: |
-          VERSION="${{ needs.stirling_pdf_full-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-stirling_pdf_full:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-stirling_pdf_full:${VERSION} ghcr.io/toledoem/stirling_pdf_full-amd64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_full-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_full:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_full:${VERSION} ghcr.io/toledoem/stirling_pdf_full-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_full-aarch64:${VERSION}
-
-  # ── stirling_pdf_ultra_lite ──────────────────────────────────────────────────
-  stirling_pdf_ultra_lite-init:
-    name: stirling_pdf_ultra_lite / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'stirling_pdf_ultra_lite-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_ultra_lite'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' stirling_pdf_ultra_lite/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_ultra_lite
-          registry-prefix: ghcr.io/toledoem
-
-  stirling_pdf_ultra_lite-build:
-    name: stirling_pdf_ultra_lite / build ${{ matrix.arch }}
-    needs: stirling_pdf_ultra_lite-init
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.stirling_pdf_ultra_lite-init.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Build and push stirling_pdf_ultra_lite (${{ matrix.arch }})
+      - name: Build and push stirling_pdf_ultra_lite
+        if: matrix.addon == 'stirling_pdf_ultra_lite'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: stirling_pdf_ultra_lite
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
-          version: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
-          build-args: |
-            BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
-            HA_BASE=${{ matrix.arch == 'amd64' && 'ghcr.io/home-assistant/amd64-base:3.23' || 'ghcr.io/home-assistant/aarch64-base:3.23' }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
-  stirling_pdf_ultra_lite-manifest:
-    name: stirling_pdf_ultra_lite / publish manifest
-    needs: [stirling_pdf_ultra_lite-init, stirling_pdf_ultra_lite-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: stirling_pdf_ultra_lite
-          image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (stirling_pdf_ultra_lite-amd64, stirling_pdf_ultra_lite-aarch64)
-        run: |
-          VERSION="${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-stirling_pdf_ultra_lite:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-stirling_pdf_ultra_lite:${VERSION} ghcr.io/toledoem/stirling_pdf_ultra_lite-amd64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_ultra_lite-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_ultra_lite:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_ultra_lite:${VERSION} ghcr.io/toledoem/stirling_pdf_ultra_lite-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/stirling_pdf_ultra_lite-aarch64:${VERSION}
-
-  # ── nginx_webserver_proxy ────────────────────────────────────────────────────
-  nginx_webserver_proxy-init:
-    name: nginx_webserver_proxy / init matrix
-    runs-on: ubuntu-latest
-    if: |
-      startsWith(github.ref_name, 'nginx_webserver_proxy-') ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-      version: ${{ steps.version.outputs.version }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Extract version
-        id: version
-        run: |
-          VERSION=$(grep '^version:' nginx_webserver_proxy/config.yaml | awk '{print $2}' | tr -d '"')
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-      - name: Build matrix
-        id: matrix
-        uses: home-assistant/builder/actions/prepare-multi-arch-matrix@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: nginx_webserver_proxy
-          registry-prefix: ghcr.io/toledoem
-
-  nginx_webserver_proxy-build:
-    name: nginx_webserver_proxy / build ${{ matrix.arch }}
-    needs: nginx_webserver_proxy-init
-    runs-on: ${{ matrix.os }}
-    permissions:
-      contents: read
-      id-token: write
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJSON(needs.nginx_webserver_proxy-init.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v5
-      - name: Build and push nginx_webserver_proxy (${{ matrix.arch }})
+      - name: Build and push nginx_webserver_proxy
+        if: matrix.addon == 'nginx_webserver_proxy'
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: nginx_webserver_proxy
-          image: ${{ matrix.image }}
-          image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
-          version: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-
-  nginx_webserver_proxy-manifest:
-    name: nginx_webserver_proxy / publish manifest
-    needs: [nginx_webserver_proxy-init, nginx_webserver_proxy-build]
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      packages: write
-    steps:
-      - name: Publish multi-arch manifest
-        uses: home-assistant/builder/actions/publish-multi-arch-manifest@2026.03.2
-        with:
-          architectures: ${{ env.ARCHITECTURES }}
-          image-name: nginx_webserver_proxy
-          image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
-          registry-prefix: ghcr.io/toledoem
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Re-tag arch-specific images (nginx_webserver_proxy-amd64, nginx_webserver_proxy-aarch64)
-        run: |
-          VERSION="${{ needs.nginx_webserver_proxy-init.outputs.version }}"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/toledoem/amd64-nginx_webserver_proxy:${VERSION}
-          docker tag ghcr.io/toledoem/amd64-nginx_webserver_proxy:${VERSION} ghcr.io/toledoem/nginx_webserver_proxy-amd64:${VERSION}
-          docker push ghcr.io/toledoem/nginx_webserver_proxy-amd64:${VERSION}
-          docker pull ghcr.io/toledoem/aarch64-nginx_webserver_proxy:${VERSION}
-          docker tag ghcr.io/toledoem/aarch64-nginx_webserver_proxy:${VERSION} ghcr.io/toledoem/nginx_webserver_proxy-aarch64:${VERSION}
-          docker push ghcr.io/toledoem/nginx_webserver_proxy-aarch64:${VERSION}
