@@ -32,4 +32,5 @@ schema:
   enable_login: bool
   langs: str
   log_level: list(info|debug|warn|error)
-image: "ghcr.io/toledoem/{arch}-stirling_pdf_ultra_lite"
+
+image: "ghcr.io/toledoem/stirling_pdf_ultra_lite-{arch}"

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.5
+
+- Bump version after new official image release
+- https://github.com/alam00000/bentopdf/releases/tag/v2.8.5
+
 ## 2.5.0
 
 - Initial release of BentoPDF Home Assistant add-on
