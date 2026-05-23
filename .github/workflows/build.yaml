@@ -4,11 +4,17 @@ on:
   push:
     tags:
       - "bentopdf-*"
+      - "bentopdf@*"
       - "manyfold_solo-*"
+      - "manyfold_solo@*"
       - "stirling_pdf_fat-*"
+      - "stirling_pdf_fat@*"
       - "stirling_pdf_full-*"
+      - "stirling_pdf_full@*"
       - "stirling_pdf_ultra_lite-*"
+      - "stirling_pdf_ultra_lite@*"
       - "nginx_webserver_proxy-*"
+      - "nginx_webserver_proxy@*"
   workflow_dispatch:
     inputs:
       addon:

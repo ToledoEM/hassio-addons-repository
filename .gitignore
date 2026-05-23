@@ -1,17 +1,13 @@
 # macOS
 .DS_Store
 
-# Claude Code
-CLAUDE.md
-.claude/
-CLAUDE-*.md
-
 # Local scripts and logs
-sync-addons.sh
-release-addons.sh
 sync-addons.log
 release-addons.log
 addons.txt
+release-addons-monorepo.sh
+release-addons.sh.deprecated
+sync-addons.sh.deprecated
 
 # Local NPM proxy configs (personal, not for the repo)
 npm-*.json
