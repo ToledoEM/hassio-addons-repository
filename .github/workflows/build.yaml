@@ -102,6 +102,17 @@ jobs:
           image-tags: ${{ needs.bentopdf-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (bentopdf-amd64, bentopdf-aarch64)
+        env:
+          VERSION: ${{ needs.bentopdf-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-bentopdf:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-bentopdf:${VERSION} ghcr.io/toledoem/bentopdf-amd64:${VERSION}
+          docker push ghcr.io/toledoem/bentopdf-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-bentopdf:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-bentopdf:${VERSION} ghcr.io/toledoem/bentopdf-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/bentopdf-aarch64:${VERSION}
 
   # ── manyfold_solo ────────────────────────────────────────────────────────────
   manyfold_solo-init:
@@ -170,6 +181,17 @@ jobs:
           image-tags: ${{ needs.manyfold_solo-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (manyfold_solo-amd64, manyfold_solo-aarch64)
+        env:
+          VERSION: ${{ needs.manyfold_solo-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-manyfold_solo:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-manyfold_solo:${VERSION} ghcr.io/toledoem/manyfold_solo-amd64:${VERSION}
+          docker push ghcr.io/toledoem/manyfold_solo-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-manyfold_solo:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-manyfold_solo:${VERSION} ghcr.io/toledoem/manyfold_solo-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/manyfold_solo-aarch64:${VERSION}
 
   # ── stirling_pdf_fat ─────────────────────────────────────────────────────────
   stirling_pdf_fat-init:
@@ -238,6 +260,17 @@ jobs:
           image-tags: ${{ needs.stirling_pdf_fat-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (stirling_pdf_fat-amd64, stirling_pdf_fat-aarch64)
+        env:
+          VERSION: ${{ needs.stirling_pdf_fat-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-stirling_pdf_fat:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-stirling_pdf_fat:${VERSION} ghcr.io/toledoem/stirling_pdf_fat-amd64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_fat-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_fat:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_fat:${VERSION} ghcr.io/toledoem/stirling_pdf_fat-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_fat-aarch64:${VERSION}
 
   # ── stirling_pdf_full ────────────────────────────────────────────────────────
   stirling_pdf_full-init:
@@ -306,6 +339,17 @@ jobs:
           image-tags: ${{ needs.stirling_pdf_full-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (stirling_pdf_full-amd64, stirling_pdf_full-aarch64)
+        env:
+          VERSION: ${{ needs.stirling_pdf_full-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-stirling_pdf_full:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-stirling_pdf_full:${VERSION} ghcr.io/toledoem/stirling_pdf_full-amd64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_full-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_full:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_full:${VERSION} ghcr.io/toledoem/stirling_pdf_full-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_full-aarch64:${VERSION}
 
   # ── stirling_pdf_ultra_lite ──────────────────────────────────────────────────
   stirling_pdf_ultra_lite-init:
@@ -376,6 +420,17 @@ jobs:
           image-tags: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (stirling_pdf_ultra_lite-amd64, stirling_pdf_ultra_lite-aarch64)
+        env:
+          VERSION: ${{ needs.stirling_pdf_ultra_lite-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-stirling_pdf_ultra_lite:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-stirling_pdf_ultra_lite:${VERSION} ghcr.io/toledoem/stirling_pdf_ultra_lite-amd64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_ultra_lite-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-stirling_pdf_ultra_lite:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-stirling_pdf_ultra_lite:${VERSION} ghcr.io/toledoem/stirling_pdf_ultra_lite-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/stirling_pdf_ultra_lite-aarch64:${VERSION}
 
   # ── nginx_webserver_proxy ────────────────────────────────────────────────────
   nginx_webserver_proxy-init:
@@ -444,3 +499,14 @@ jobs:
           image-tags: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
           registry-prefix: ghcr.io/toledoem
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Re-tag arch-specific images (nginx_webserver_proxy-amd64, nginx_webserver_proxy-aarch64)
+        env:
+          VERSION: ${{ needs.nginx_webserver_proxy-init.outputs.version }}
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/toledoem/amd64-nginx_webserver_proxy:${VERSION}
+          docker tag ghcr.io/toledoem/amd64-nginx_webserver_proxy:${VERSION} ghcr.io/toledoem/nginx_webserver_proxy-amd64:${VERSION}
+          docker push ghcr.io/toledoem/nginx_webserver_proxy-amd64:${VERSION}
+          docker pull ghcr.io/toledoem/aarch64-nginx_webserver_proxy:${VERSION}
+          docker tag ghcr.io/toledoem/aarch64-nginx_webserver_proxy:${VERSION} ghcr.io/toledoem/nginx_webserver_proxy-aarch64:${VERSION}
+          docker push ghcr.io/toledoem/nginx_webserver_proxy-aarch64:${VERSION}
