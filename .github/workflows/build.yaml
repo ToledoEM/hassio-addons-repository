@@ -39,9 +39,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: |
-      startsWith(github.ref_name, matrix.addon) ||
-      (github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == matrix.addon))
     strategy:
       fail-fast: false
       matrix:
@@ -73,7 +70,7 @@ jobs:
           echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
 
       - name: Build and push bentopdf
-        if: matrix.addon == 'bentopdf'
+        if: matrix.addon == 'bentopdf' && (startsWith(github.ref_name, 'bentopdf') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'bentopdf'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
@@ -87,7 +84,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push manyfold_solo
-        if: matrix.addon == 'manyfold_solo'
+        if: matrix.addon == 'manyfold_solo' && (startsWith(github.ref_name, 'manyfold_solo') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'manyfold_solo'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
@@ -101,7 +98,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push stirling_pdf_fat
-        if: matrix.addon == 'stirling_pdf_fat'
+        if: matrix.addon == 'stirling_pdf_fat' && (startsWith(github.ref_name, 'stirling_pdf_fat') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_fat'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
@@ -115,7 +112,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push stirling_pdf_full
-        if: matrix.addon == 'stirling_pdf_full'
+        if: matrix.addon == 'stirling_pdf_full' && (startsWith(github.ref_name, 'stirling_pdf_full') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_full'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
@@ -129,7 +126,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push stirling_pdf_ultra_lite
-        if: matrix.addon == 'stirling_pdf_ultra_lite'
+        if: matrix.addon == 'stirling_pdf_ultra_lite' && (startsWith(github.ref_name, 'stirling_pdf_ultra_lite') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'stirling_pdf_ultra_lite'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
@@ -143,7 +140,7 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push nginx_webserver_proxy
-        if: matrix.addon == 'nginx_webserver_proxy'
+        if: matrix.addon == 'nginx_webserver_proxy' && (startsWith(github.ref_name, 'nginx_webserver_proxy') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
