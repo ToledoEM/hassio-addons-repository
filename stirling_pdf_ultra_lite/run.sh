@@ -7,24 +7,27 @@ DEFAULT_LANGS="en_GB"
 DEFAULT_LOG_LEVEL="info"
 
 log() {
-  echo "[stirling-pdf-ultra-lite-addon] $*"
+    echo "[stirling-pdf-ultra-lite-addon] $*"
 }
 
 die() {
-  echo "[stirling-pdf-ultra-lite-addon] ERROR: $*" >&2
-  exit 1
+    echo "[stirling-pdf-ultra-lite-addon] ERROR: $*" >&2
+    exit 1
 }
 
 read_opt() {
-  local key="$1"
-  jq -er --arg k "$key" '.[$k]' "$OPTIONS_JSON" 2>/dev/null || true
+    local key="$1"
+    jq -er --arg k "$key" '.[$k]' "$OPTIONS_JSON" 2> /dev/null || true
 }
 
 [[ -f "$OPTIONS_JSON" ]] || die "Missing options file at ${OPTIONS_JSON}"
 
-ENABLE_LOGIN="$(read_opt enable_login)"; ENABLE_LOGIN="${ENABLE_LOGIN:-false}"
-LANGS="$(read_opt langs)";               LANGS="${LANGS:-$DEFAULT_LANGS}"
-LOG_LEVEL="$(read_opt log_level)";       LOG_LEVEL="${LOG_LEVEL:-$DEFAULT_LOG_LEVEL}"
+ENABLE_LOGIN="$(read_opt enable_login)"
+ENABLE_LOGIN="${ENABLE_LOGIN:-false}"
+LANGS="$(read_opt langs)"
+LANGS="${LANGS:-$DEFAULT_LANGS}"
+LOG_LEVEL="$(read_opt log_level)"
+LOG_LEVEL="${LOG_LEVEL:-$DEFAULT_LOG_LEVEL}"
 
 # Persistent directories on HA mapped volumes
 CONFIGS_DIR="/config/stirling_pdf_ultra_lite/configs"
@@ -36,20 +39,19 @@ mkdir -p "$CONFIGS_DIR" "$LOGS_DIR" "$PIPELINE_DIR"
 # Symlink HA persistent paths → Stirling-PDF expected paths
 # (only if not already linked to a persistent location)
 for pair in \
-  "${CONFIGS_DIR}:/configs" \
-  "${LOGS_DIR}:/logs" \
-  "${PIPELINE_DIR}:/pipeline"
-do
-  src="${pair%%:*}"
-  dst="${pair##*:}"
-  if [[ -L "$dst" ]]; then
-    rm "$dst"
-  elif [[ -d "$dst" ]]; then
-    # Seed with any existing default files, then replace with symlink
-    cp -rn "$dst/." "$src/" 2>/dev/null || true
-    rm -rf "$dst"
-  fi
-  ln -sf "$src" "$dst"
+    "${CONFIGS_DIR}:/configs" \
+    "${LOGS_DIR}:/logs" \
+    "${PIPELINE_DIR}:/pipeline"; do
+    src="${pair%%:*}"
+    dst="${pair##*:}"
+    if [[ -L "$dst" ]]; then
+        rm "$dst"
+    elif [[ -d "$dst" ]]; then
+        # Seed with any existing default files, then replace with symlink
+        cp -rn "$dst/." "$src/" 2> /dev/null || true
+        rm -rf "$dst"
+    fi
+    ln -sf "$src" "$dst"
 done
 
 export SECURITY_ENABLELOGIN="$ENABLE_LOGIN"
@@ -63,10 +65,10 @@ export HOME="${HOME:-/root}"
 # Compute JVM heap dynamically from available container memory.
 # Uses 40% for heap (Xmx) and 15% for metaspace, with floors to stay stable.
 _total_mb=$(awk '/MemTotal/ { printf "%d", $2/1024 }' /proc/meminfo)
-_xmx_mb=$(( _total_mb * 40 / 100 ))
-_meta_mb=$(( _total_mb * 15 / 100 ))
-[[ $_xmx_mb -lt 128 ]]  && _xmx_mb=128
-[[ $_meta_mb -lt 64 ]]  && _meta_mb=64
+_xmx_mb=$((_total_mb * 40 / 100))
+_meta_mb=$((_total_mb * 15 / 100))
+[[ $_xmx_mb -lt 128 ]] && _xmx_mb=128
+[[ $_meta_mb -lt 64 ]] && _meta_mb=64
 log "Detected ${_total_mb}MB RAM → JVM Xmx=${_xmx_mb}m MaxMetaspace=${_meta_mb}m"
 export JAVA_BASE_OPTS="-XX:+ExitOnOutOfMemoryError -XX:+UseG1GC -XX:+UseStringDeduplication -Dspring.threads.virtual.enabled=true -Xms64m -Xmx${_xmx_mb}m -XX:MaxMetaspaceSize=${_meta_mb}m"
 
@@ -79,8 +81,8 @@ log "  logs=${LOGS_DIR}"
 log "  pipeline=${PIPELINE_DIR}"
 
 # Kill any stale unoserver/soffice left over from a previous crash before restarting
-pkill -f "unoserver" 2>/dev/null || true
-pkill -f "soffice"   2>/dev/null || true
+pkill -f "unoserver" 2> /dev/null || true
+pkill -f "soffice" 2> /dev/null || true
 sleep 1
 
 # Delegate to upstream init script which handles java startup correctly

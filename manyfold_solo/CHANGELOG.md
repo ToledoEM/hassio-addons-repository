@@ -2,16 +2,16 @@
 
 ## 0.141
 - This release adds a couple of new features, and a few bugfixes, as well as some internal refactoring and improved tests. You can now set a preferred "landing page", like "my models" or "all creators", as well as the current "dashboard" - and that can be site-wide, or per-user. And, due to some of that internal refactoring, we now have syntax highlighting for some text files (e.g. Javascript).
-- Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.141.0
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.141.0>
 
 ## 0.140.1
 - A small bugfix release for a couple of errors recently introduced in the metadata parsing.
-- Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.140.1
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.140.1>
 
 ## 0.140.0
 
 - Bumped to lasted version of Manyfold for both `amd64` and `aarch64`
-- Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.140.0
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.140.0>
 - Fixed Bundler `/root is not writable` warning by exporting `HOME=/config` before startup.
 - Added Raspberry Pi single-user configuration example to README.
 
@@ -34,7 +34,7 @@
 ## 0.137.0
 
 - Bumped upstream Manyfold image to `ghcr.io/manyfold3d/manyfold-solo:0.137.0` for both `amd64` and `aarch64`.
-- Add funtionalities about sharing and comment federation, some implemented in 0.136.0 
+- Add funtionalities about sharing and comment federation, some implemented in 0.136.0
 
 ## 0.135.0
 
