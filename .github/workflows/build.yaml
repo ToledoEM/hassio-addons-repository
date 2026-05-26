@@ -69,11 +69,6 @@ jobs:
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "image=${IMAGE}" >> "$GITHUB_OUTPUT"
 
-          # Extract upstream base image version for addons that track upstream releases
-          if [ "${{ matrix.addon }}" = "manyfold_solo" ]; then
-            echo "upstream_version=${VERSION}" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Build and push bentopdf
         if: matrix.addon == 'bentopdf' && (startsWith(github.ref_name, 'bentopdf') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'bentopdf'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
@@ -97,7 +92,7 @@ jobs:
           image: ${{ steps.meta.outputs.image }}
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
-          build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:${{ steps.meta.outputs.upstream_version }}
+          build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:latest
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
