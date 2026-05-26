@@ -150,17 +150,14 @@ After changing values:
 
 ## Update procedure
 
-This add-on uses a local build (via `Dockerfile` + `build.yaml`) rather than a pre-built registry image, so updating requires a **Rebuild** — not just a standard update.
+This add-on uses the pre-built `manyfold-solo` image from GitHub Container Registry (`ghcr.io/manyfold3d/manyfold-solo`), so updating is straightforward.
 
 When a new version is released:
 
 1. In HA, go to **Settings → Add-ons → Add-on Store**.
 2. Click the **⋮ menu** (top right) → **Check for updates** (or **Reload**).
 3. Open the **Manyfold** add-on page.
-4. Click **Rebuild** (not Update).
-
-**Why Rebuild?**
-A normal *Update* swaps in a pre-built image from a registry. This add-on instead builds locally from `Dockerfile`, which uses `FROM ${BUILD_FROM}` to pull the upstream `manyfold-solo` image specified in `build.yaml`. *Rebuild* re-runs that Dockerfile against the new base image, installs the required packages, and replaces the running container with the result.
+4. Click **Update** to pull the latest image and restart.
 
 ## Validation behavior
 
