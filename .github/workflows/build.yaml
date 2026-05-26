@@ -71,8 +71,7 @@ jobs:
 
           # Extract upstream base image version for addons that track upstream releases
           if [ "${{ matrix.addon }}" = "manyfold_solo" ]; then
-            UPSTREAM_VERSION="v${VERSION}"
-            echo "upstream_version=${UPSTREAM_VERSION}" >> "$GITHUB_OUTPUT"
+            echo "upstream_version=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build and push bentopdf
