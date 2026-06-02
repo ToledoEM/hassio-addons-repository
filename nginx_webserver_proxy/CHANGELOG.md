@@ -1,12 +1,6 @@
 # Changelog
 
 
-## 2.15.0
-
-- Bump version 
-- Details: https://github.com/NginxProxyManager/nginx-proxy-manager/releases/tag/v2.15.0
-
-
 ## 2.14.0
 
 - Initial release wrapping jc21/nginx-proxy-manager:latest
