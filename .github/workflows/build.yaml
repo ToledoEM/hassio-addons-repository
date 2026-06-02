@@ -139,6 +139,10 @@ jobs:
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Pre-pull nginx base image
+        if: matrix.addon == 'nginx_webserver_proxy' && (startsWith(github.ref_name, 'nginx_webserver_proxy') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
+        run: docker pull jc21/nginx-proxy-manager:latest
+
       - name: Build and push nginx_webserver_proxy
         if: matrix.addon == 'nginx_webserver_proxy' && (startsWith(github.ref_name, 'nginx_webserver_proxy') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
