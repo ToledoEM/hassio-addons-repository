@@ -2,7 +2,7 @@
 
 ## 0.143
 
-- Details: https://github.com/manyfold3d/manyfold/releases/tag/v0.143.0
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.143.0>
 
 ## 0.142
 - This release allows the use of videos in preview frames, so you can show off your models in a more dynamic fashion, and also adds indexer support for the upcoming DragonFruit resin slicer VOXL file format.

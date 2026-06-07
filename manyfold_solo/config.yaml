@@ -51,6 +51,4 @@ schema:
   max_file_upload_size: int
   max_file_extract_size: int
 
-
-
 image: "ghcr.io/toledoem/manyfold_solo-{arch}"
