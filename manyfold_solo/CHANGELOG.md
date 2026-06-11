@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.143.2
+
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.143.2>
+
 ## 0.143.1
 
 - Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.143.1>
