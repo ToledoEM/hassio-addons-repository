@@ -29,4 +29,5 @@ options:
 schema:
   log_level: list(info|debug|warn|error)
 
+
 image: "ghcr.io/toledoem/bentopdf-{arch}"

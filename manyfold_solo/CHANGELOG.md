@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.144.1
+
+- Details: <https://github.com/manyfold3d/manyfold/tree/v0.144.1>
+
 ## 0.144.0
 
 - Details: <https://github.com/manyfold3d/manyfold/tree/v0.144.0>
