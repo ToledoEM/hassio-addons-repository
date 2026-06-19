@@ -1,6 +1,12 @@
 # Changelog
 
 
+## 2.14.1
+
+- Fix startup failure on aarch64/HAos: "/usr/bin/env: 'bash': Permission denied" (#2777)
+- Add custom AppArmor profile allowing the s6-overlay boot chain and bash/env exec
+
+
 ## 2.14.0
 
 - Initial release wrapping jc21/nginx-proxy-manager:latest

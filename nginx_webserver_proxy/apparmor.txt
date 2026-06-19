@@ -1,0 +1,44 @@
+#include <tunables/global>
+
+# AppArmor profile for the nginx_webserver_proxy add-on.
+#
+# This add-on wraps the s6-overlay based jc21/nginx-proxy-manager image.
+# The default HA Supervisor profile denies execution through
+# /usr/bin/env and /usr/bin/with-contenv, which breaks the add-on with:
+#   /usr/bin/env: 'bash': Permission denied
+#
+# This profile allows the s6-overlay boot chain, bash/env exec, and the
+# nginx + Node.js (NPM) runtime, while keeping basic confinement.
+profile hassio-addons/nginx_webserver_proxy flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+
+  # Broad file and network access required by s6-overlay, nginx and NPM's
+  # Node.js backend. Tighten only after confirming the add-on works.
+  file,
+  network,
+
+  capability chown,
+  capability dac_override,
+  capability fowner,
+  capability kill,
+  capability net_bind_service,
+  capability setgid,
+  capability setuid,
+
+  # s6-overlay init system and the add-on entrypoint.
+  /init ix,
+  /usr/bin/env ix,
+  /usr/bin/with-contenv ix,
+  /npm-addon-init.sh ix,
+  /command/** ix,
+  /package/** ix,
+  /run/{s6,s6-rc,service}/** rwix,
+  /etc/s6-overlay/** rwix,
+
+  deny /proc/kcore rwklx,
+  deny /proc/sysrq-trigger rwklx,
+  deny /sys/firmware/** rwklx,
+}

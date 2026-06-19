@@ -12,3 +12,6 @@ sync-addons.sh.deprecated
 # Local NPM proxy configs (personal, not for the repo)
 npm-*.json
 npm-*.md
+
+# WIP add-on plan (local, not for the repo)
+CATALOGUECANVAS_ADDON_PLAN.md
