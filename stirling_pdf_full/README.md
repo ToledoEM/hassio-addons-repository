@@ -12,7 +12,7 @@ For extra fonts and pre-bundled security, use **[Stirling-PDF Fat](../stirling_p
 ## What Full adds over Ultra-Lite
 
 | Feature | Ultra-Lite | Full |
-|---|:---:|:---:|
+| --- | :---: | :---: |
 | Merge, split, compress, rotate, watermark | ✓ | ✓ |
 | Sign, annotate, redact, reorder pages | ✓ | ✓ |
 | Convert images to and from PDF | ✓ | ✓ |
@@ -30,7 +30,7 @@ For extra fonts and pre-bundled security, use **[Stirling-PDF Fat](../stirling_p
 ## Requirements
 
 | | Minimum | Recommended |
-|---|---|---|
+| --- | --- | --- |
 | **RAM** | 4 GB | 6 GB+ |
 | **Storage** | 4.5 GB | — |
 | **Arch** | amd64, aarch64 | — |
@@ -49,7 +49,7 @@ The first install takes several minutes to download the image.
 ## Configuration
 
 | Option | Default | Description |
-|---|---|---|
+| --- | --- | --- |
 | `enable_login` | `false` | Turn on built-in authentication for multi-user setups. |
 | `langs` | `en_GB` | Comma-separated Tesseract language codes, e.g. `en_GB,fra,deu`. |
 | `log_level` | `info` | Verbosity: `info`, `debug`, `warn`, or `error`. |
@@ -77,7 +77,7 @@ See the [Stirling-PDF documentation](https://docs.stirlingpdf.com) for user mana
 All data survives add-on updates and restarts.
 
 | Data | Host path |
-|---|---|
+| --- | --- |
 | Configuration and settings | `/config/stirling_pdf_full/configs/` |
 | Application logs | `/config/stirling_pdf_full/logs/` |
 | Tesseract language files | `/share/stirling_pdf_full/tessdata/` |

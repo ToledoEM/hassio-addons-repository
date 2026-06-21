@@ -35,7 +35,7 @@ These require the Full or Fat variant:
 ## Requirements
 
 | | Minimum | Recommended |
-|---|---|---|
+| --- | --- | --- |
 | **RAM** | 2 GB | 4 GB |
 | **Storage** | 700 MB | — |
 | **Arch** | amd64, aarch64 | — |
@@ -52,7 +52,7 @@ The add-on caps the container at 1 GB and sizes the JVM heap to 40% of available
 ## Configuration
 
 | Option | Default | Description |
-|---|---|---|
+| --- | --- | --- |
 | `enable_login` | `false` | Turn on built-in authentication for multi-user setups. |
 | `langs` | `en_GB` | Comma-separated Tesseract language codes (reserved for future use). |
 | `log_level` | `info` | Verbosity: `info`, `debug`, `warn`, or `error`. |
@@ -80,7 +80,7 @@ See the [Stirling-PDF documentation](https://docs.stirlingpdf.com) for user mana
 All data survives add-on updates and restarts.
 
 | Data | Host path |
-|---|---|
+| --- | --- |
 | Configuration and settings | `/config/stirling_pdf_ultra_lite/configs/` |
 | Application logs | `/config/stirling_pdf_ultra_lite/logs/` |
 | Tesseract language files | `/share/stirling_pdf_ultra_lite/tessdata/` |

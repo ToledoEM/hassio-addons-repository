@@ -19,7 +19,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Organize & Edit
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | Merge PDF | Split PDF | Organize PDF |
 | Delete Pages | Extract Pages | Reverse Pages |
 | Rotate PDF | Rotate Custom | Crop PDF |
@@ -30,7 +30,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Convert TO PDF
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | Word to PDF | Excel to PDF | PowerPoint to PDF |
 | Image to PDF | JPG to PDF | PNG to PDF |
 | BMP to PDF | TIFF to PDF | WEBP to PDF |
@@ -46,7 +46,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Convert FROM PDF
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | PDF to DOCX | PDF to Excel | PDF to JPG |
 | PDF to PNG | PDF to BMP | PDF to TIFF |
 | PDF to WEBP | PDF to SVG | PDF to Text |
@@ -56,7 +56,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Security & Metadata
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | Encrypt PDF | Decrypt PDF | Change Permissions |
 | Remove Restrictions | Sign PDF | Digital Sign PDF |
 | Validate Signature | Edit Metadata | View Metadata |
@@ -66,7 +66,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Enhance & Process
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | Compress PDF | OCR PDF | Deskew PDF |
 | Rasterize PDF | Linearize PDF | PDF to PDF/A |
 | Adjust Colors | Invert Colors | Text Color |
@@ -78,7 +78,7 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 ### Forms & More
 
 | Tool | Tool | Tool |
-|------|------|------|
+| ------ | ------ | ------ |
 | Form Creator | Form Filler | Table of Contents |
 | Bookmark | PDF Editor | Extract Images |
 | Extract Tables | Extract Attachments | Edit Attachments |
