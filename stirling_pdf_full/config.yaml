@@ -33,4 +33,5 @@ schema:
   langs: str
   log_level: list(info|debug|warn|error)
 
+
 image: "ghcr.io/toledoem/stirling_pdf_full-{arch}"
