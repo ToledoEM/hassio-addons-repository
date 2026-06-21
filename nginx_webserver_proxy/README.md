@@ -12,7 +12,7 @@ A Home Assistant add-on combining [Nginx Proxy Manager](https://nginxproxymanage
 ## Configuration
 
 | Option | Default | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `static_site_enabled` | `true` | Enable or disable the static file server |
 | `static_site_root` | `/share/www` | Path to serve files from |
 | `static_site_prefix` | `/` | URL prefix for the static site on port 80 |
