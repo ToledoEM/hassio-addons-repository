@@ -1,6 +1,6 @@
 # Stirling-PDF Ultra-Lite — Home Assistant Add-on
 
-**Current version: 2.11.0**
+**Current version: 2.13.1**
 
 The lightest Stirling-PDF tier. No OCR, no LibreOffice, no Ghostscript. Installs fast and runs on modest hardware.
 
@@ -99,6 +99,10 @@ After startup, click **Open Web UI** or go to `http://homeassistant.local:8080`.
 Single-stage build on top of `stirlingtools/stirling-pdf:latest-ultra-lite`. s6-overlay and bashio are installed on the upstream image. Only `amd64` and `aarch64` are supported.
 
 ## Changelog
+
+### 2.13.1
+- Update to Stirling-PDF 2.13.1.
+- Fix build: install `jq` with `apt-get` instead of `apk`, matching the Debian-based upstream image.
 
 ### 2.11.0
 - Update to Stirling-PDF 2.11.0.

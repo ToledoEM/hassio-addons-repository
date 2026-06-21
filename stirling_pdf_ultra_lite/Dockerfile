@@ -20,8 +20,10 @@ COPY --from=ha-tools /usr/bin/with-contenv /usr/bin/with-contenv
 COPY --from=ha-tools /usr/lib/bashio /usr/lib/bashio
 
 # Install jq only
-# hadolint ignore=DL3018
-RUN apk add --no-cache jq
+# hadolint ignore=DL3008
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends jq \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /logs /configs /pipeline /usr/share/tesseract-ocr/5
 

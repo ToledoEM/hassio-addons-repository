@@ -1,6 +1,6 @@
 # Stirling-PDF Fat — Home Assistant Add-on
 
-**Current version: 2.11.0**
+**Current version: 2.13.1**
 
 The largest Stirling-PDF tier. Includes everything in Full, plus extra fonts and pre-bundled security jars. Choose it when you need broad font coverage or air-gapped operation.
 
@@ -102,6 +102,9 @@ After startup, click **Open Web UI** or go to `http://homeassistant.local:8080`.
 Single-stage build on top of `stirlingtools/stirling-pdf:latest-fat`. s6-overlay and bashio are installed on the upstream image. Only `amd64` and `aarch64` are supported.
 
 ## Changelog
+
+### 2.13.1
+- Update to Stirling-PDF 2.13.1.
 
 ### 2.11.0
 - Update to Stirling-PDF 2.11.0.

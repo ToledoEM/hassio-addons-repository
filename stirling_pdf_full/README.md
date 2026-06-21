@@ -1,6 +1,6 @@
 # Stirling-PDF Full — Home Assistant Add-on
 
-**Current version: 2.11.0**
+**Current version: 2.13.1**
 
 Stirling-PDF Full includes OCR, LibreOffice conversion, Ghostscript, ImageMagick, and Weasyprint. Use it when you need the complete toolchain without the extra fonts and pre-bundled security jars in the Fat variant.
 
@@ -100,6 +100,9 @@ After startup, click **Open Web UI** or go to `http://homeassistant.local:8080`.
 Single-stage build on top of `stirlingtools/stirling-pdf:latest`. s6-overlay and bashio are installed on the upstream image. Only `amd64` and `aarch64` are supported.
 
 ## Changelog
+
+### 2.13.1
+- Update to Stirling-PDF 2.13.1.
 
 ### 2.11.0
 - Update to Stirling-PDF 2.11.0.
