@@ -31,4 +31,5 @@ schema:
 
 
 
+
 image: "ghcr.io/toledoem/bentopdf-{arch}"

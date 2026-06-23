@@ -35,4 +35,5 @@ schema:
 
 
 
+
 image: "ghcr.io/toledoem/stirling_pdf_ultra_lite-{arch}"
