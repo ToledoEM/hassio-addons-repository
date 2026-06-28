@@ -24,10 +24,9 @@ https://github.com/ToledoEM/hassio-addons-repository
 ```
 
 ## Add-ons
-
 | Icon | Name | Slug | Version | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| <img src="bentopdf/icon.png" width="150" height="150" /> | [BentoPDF](bentopdf/README.md) | bentopdf | 2.8.5 | Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device. |
+| <img src="bentopdf/icon.png" width="150" height="150" /> | [BentoPDF](bentopdf/README.md) | bentopdf | 2.8.6 | Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device. |
 | <img src="manyfold_solo/icon.png" width="150" height="150" /> | [Manyfold](manyfold_solo/README.md) | manyfold_solo | 0.145.1 | Manyfold 3D model manager as a Home Assistant add-on, using the manyfold-solo image with configurable library/index paths. |
 | <img src="stirling_pdf_fat/icon.png" width="150" height="150" /> | [Stirling-PDF Fat](stirling_pdf_fat/README.md) | stirling_pdf_fat | 2.13.1 | Stirling-PDF Fat — all Full features plus additional fonts and pre-bundled jar security. OCR, LibreOffice, Ghostscript, ImageMagick. Larger image (~4 GB). |
 | <img src="stirling_pdf_full/icon.png" width="150" height="150" /> | [Stirling-PDF Full](stirling_pdf_full/README.md) | stirling_pdf_full | 2.13.1 | Stirling-PDF Full — all features pre-configured: merge, split, compress, convert, sign, annotate, OCR, and more. |
