@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.146.9
+
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.146.0>
 
 ## 0.145.1
 
