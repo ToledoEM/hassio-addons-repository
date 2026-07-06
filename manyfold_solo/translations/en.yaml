@@ -2,6 +2,9 @@ configuration:
   secret_key_base:
     name: Secret key base
     description: Leave blank to auto-generate and persist at /config/secret_key_base.
+  public_hostname:
+    name: Public hostname
+    description: Host used in generated links (mailer and "Open in slicer" downloads). Leave blank to auto-detect the Home Assistant host from the Supervisor. Set a hostname or LAN IP reachable from your other devices if the links point at localhost.
   puid:
     name: PUID
     description: User ID for file ownership on writable mapped volumes.

@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.146.9
+## 0.146.0_1
+
+- Add-on Docker configuration update: add `public_hostname` option and set Manyfold's `PUBLIC_HOSTNAME`/`PUBLIC_PORT` env vars so generated links (mailer and "Open in slicer" downloads) point at a reachable host instead of `localhost`. Auto-detects the Home Assistant host from the Supervisor when left blank.
+
+## 0.146.0
 
 - Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.146.0>
 

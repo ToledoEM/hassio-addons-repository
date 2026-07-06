@@ -111,6 +111,21 @@ chown_recursive_if_writable() {
     log "Skipping ownership update for ${path} (read-only mapping)"
 }
 
+# Query the Supervisor API for the host's configured hostname, so generated
+# absolute URLs (mailer + "Open in slicer" download links) point at a
+# reachable host instead of localhost. Prints nothing on failure.
+detect_supervisor_hostname() {
+    [[ -n "${SUPERVISOR_TOKEN:-}" ]] || return 0
+    command -v curl > /dev/null 2>&1 || return 0
+
+    local response
+    response="$(curl -fsSL \
+        -H "Authorization: Bearer ${SUPERVISOR_TOKEN}" \
+        "http://supervisor/info" 2> /dev/null)" || return 0
+
+    jq -er '.data.hostname // empty' <<< "$response" 2> /dev/null || true
+}
+
 generate_secret() {
     if command -v openssl > /dev/null 2>&1; then
         openssl rand -hex 64
@@ -195,6 +210,15 @@ MAX_FILE_EXTRACT_SIZE="$(read_opt max_file_extract_size)"
 MAX_FILE_EXTRACT_SIZE="${MAX_FILE_EXTRACT_SIZE:-$DEFAULT_MAX_FILE_EXTRACT_SIZE}"
 SECRET_KEY_BASE="$(read_opt secret_key_base)"
 SECRET_KEY_BASE="${SECRET_KEY_BASE:-}"
+PUBLIC_HOSTNAME="$(read_opt public_hostname)"
+PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-}"
+if [[ -z "$PUBLIC_HOSTNAME" || "$PUBLIC_HOSTNAME" == "null" ]]; then
+    PUBLIC_HOSTNAME="$(detect_supervisor_hostname)"
+    if [[ -n "$PUBLIC_HOSTNAME" ]]; then
+        log "Auto-detected public_hostname from Supervisor: ${PUBLIC_HOSTNAME}"
+    fi
+fi
+PUBLIC_HOSTNAME="${PUBLIC_HOSTNAME:-}"
 
 [[ "$PUID" =~ ^[0-9]+$ ]] || die "puid must be a non-negative integer"
 [[ "$PGID" =~ ^[0-9]+$ ]] || die "pgid must be a non-negative integer"
@@ -252,6 +276,15 @@ export MAX_FILE_UPLOAD_SIZE
 export MAX_FILE_EXTRACT_SIZE
 export PORT="3214"
 
+# PUBLIC_HOSTNAME/PUBLIC_PORT control the host Manyfold bakes into generated
+# absolute URLs (mailer links and "Open in slicer" download links). Only set
+# them when a hostname is configured; PUBLIC_PORT must be set alongside it so
+# Manyfold does not assume port 80/443 and drop the add-on's 3214 port.
+if [[ -n "$PUBLIC_HOSTNAME" && "$PUBLIC_HOSTNAME" != "null" ]]; then
+    export PUBLIC_HOSTNAME
+    export PUBLIC_PORT="3214"
+fi
+
 chown_recursive_if_writable "$PUID:$PGID" "$CONFIG_DIR"
 chown_recursive_if_writable "$PUID:$PGID" "$DEFAULT_THUMBNAILS_PATH"
 chown_recursive_if_writable "$PUID:$PGID" "$LIBRARY_PATH"
@@ -270,5 +303,10 @@ log "  default_worker_concurrency=${DEFAULT_WORKER_CONCURRENCY}"
 log "  performance_worker_concurrency=${PERFORMANCE_WORKER_CONCURRENCY}"
 log "  max_file_upload_size=${MAX_FILE_UPLOAD_SIZE}"
 log "  max_file_extract_size=${MAX_FILE_EXTRACT_SIZE}"
+if [[ -n "$PUBLIC_HOSTNAME" && "$PUBLIC_HOSTNAME" != "null" ]]; then
+    log "  public_hostname=${PUBLIC_HOSTNAME} (public_port=3214)"
+else
+    log "  public_hostname=<unset> (auto-detect failed; generated links default to localhost)"
+fi
 
 start_manyfold

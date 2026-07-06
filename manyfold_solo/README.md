@@ -53,6 +53,7 @@ Local development alternative on the HA host:
 ## Options
 
 - `secret_key_base`: App secret. Auto-generated and persisted at `/config/secret_key_base` when empty.
+- `public_hostname`: Host used in generated absolute links (see "Open in slicer links" below). Leave blank to auto-detect the Home Assistant host; set a hostname or LAN IP when needed.
 - `puid` / `pgid`: Ownership applied to writable mapped directories (`/config` paths).
 - `multiuser`: Toggle Manyfold multiuser mode.
 - `library_path`: Scanned/indexed path.
@@ -147,6 +148,19 @@ After changing values:
 1. Save add-on Configuration.
 2. Restart the Manyfold add-on.
 3. Check logs for `puid:pgid=<uid>:<gid>` and confirm the warning is gone.
+
+## Open in slicer links (`public_hostname`)
+
+Manyfold builds absolute URLs — including the "Open in OrcaSlicer / PrusaSlicer / Bambu Studio / Cura / ..." download links — from a single configured host. When that host is unset, Manyfold defaults to `localhost`, so every generated link looks like `http://localhost:3214/...`.
+
+That link only works on the machine running the add-on. When you click it from a phone, laptop, or any other computer, `localhost` points back at *that* device, the download fails, and the slicer opens with nothing loaded.
+
+To fix this, the add-on sets Manyfold's `PUBLIC_HOSTNAME` (and `PUBLIC_PORT=3214`) for you:
+
+- Leave `public_hostname` **blank** and the add-on asks the Supervisor for the Home Assistant host name and uses that.
+- If auto-detection does not resolve from your other devices (for example when mDNS/`.local` names are blocked), set `public_hostname` manually to a name or LAN IP those devices can reach, e.g. `homeassistant.local` or `192.168.1.50`. A DHCP reservation keeps an IP stable.
+
+After changing it, restart the add-on and check the log for `public_hostname=<value>`, then regenerate a slicer link. Existing links are generated at click time, so no re-export is needed.
 
 ## Update procedure
 
