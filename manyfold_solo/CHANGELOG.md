@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.146.0_2
+
+- Fixed `public_hostname` auto-detection: was querying the Supervisor's own `/info` hostname instead of the HA host's; now queries `/host/info` and requires `hassio_role: homeassistant`.
+- Fixed forced `https://` redirects on the plain-HTTP web UI (e.g. `/users/sign_in`) caused by Manyfold's `config.assume_ssl` being tied to `PUBLIC_HOSTNAME` presence with no way to opt out; the add-on now drops in a Rails initializer to keep `assume_ssl` off, since this add-on has no SSL-terminating reverse proxy in front of it.
+
 ## 0.146.0_1
 
 - Add-on Docker configuration update: add `public_hostname` option and set Manyfold's `PUBLIC_HOSTNAME`/`PUBLIC_PORT` env vars so generated links (mailer and "Open in slicer" downloads) point at a reachable host instead of `localhost`. Auto-detects the Home Assistant host from the Supervisor when left blank.
