@@ -81,6 +81,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base:3.23
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
@@ -95,6 +96,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=ghcr.io/manyfold3d/manyfold-solo:latest
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
@@ -109,6 +111,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-fat
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
@@ -123,6 +126,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
@@ -137,6 +141,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=stirlingtools/stirling-pdf:latest-ultra-lite
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
@@ -155,6 +160,7 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
+          cache-gha: "false"
           cosign: "false"
           push: "true"
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
