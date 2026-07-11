@@ -39,6 +39,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     strategy:
       fail-fast: false
       matrix:
