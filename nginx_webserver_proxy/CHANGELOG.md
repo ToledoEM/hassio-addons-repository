@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 2.14.1-1
+
+- Persist Let's Encrypt certificates across restarts by symlinking /etc/letsencrypt to /data/letsencrypt (#2828) — thanks to @crazyrokr for reporting and suggesting the fix
+
+
 ## 2.14.1
 
 - Fix startup failure on aarch64/HAos: "/usr/bin/env: 'bash': Permission denied" (#2777)
