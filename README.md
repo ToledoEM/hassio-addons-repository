@@ -24,6 +24,7 @@ https://github.com/ToledoEM/hassio-addons-repository
 ```
 
 ## Add-ons
+
 | Icon | Name | Slug | Version | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | <img src="bentopdf/icon.png" width="150" height="150" /> | [BentoPDF](bentopdf/README.md) | bentopdf | 2.8.6 | Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device. |
