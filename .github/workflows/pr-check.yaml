@@ -72,6 +72,8 @@ jobs:
     needs: check-addon-changes
     if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' && needs.check-addon-changes.outputs.changedAddons != '' }}
     runs-on: ubuntu-latest
+    env:
+      BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     strategy:
       fail-fast: false
       matrix:
@@ -107,6 +109,8 @@ jobs:
           context: ${{ matrix.addon }}
           file: ${{ matrix.addon }}/Dockerfile
           push: false
+          provenance: false
+          sbom: false
           tags: local/${{ matrix.addon }}-${{ matrix.arch }}:test
           build-args: |
             BUILD_FROM=${{ fromJSON(steps.information.outputs.build_from)[matrix.arch] }}
