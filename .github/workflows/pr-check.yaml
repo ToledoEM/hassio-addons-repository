@@ -83,11 +83,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Gather addon info
+      - name: Resolve build_from
         id: information
-        uses: frenck/action-addon-information@v1.4
-        with:
-          path: "./${{ matrix.addon }}/"
+        run: |
+          build_file="${{ matrix.addon }}/build.yaml"
+          if [[ ! -f "$build_file" ]]; then
+            echo "::error::No build.yaml found for ${{ matrix.addon }}"
+            exit 1
+          fi
+
+          build_from=$(yq -r '.build_from["${{ matrix.arch }}"] // ""' "$build_file")
+          if [[ -z "$build_from" || "$build_from" == "null" ]]; then
+            echo "::error::No build_from entry for arch '${{ matrix.arch }}' in $build_file"
+            exit 1
+          fi
+
+          echo "Resolved BUILD_FROM=${build_from}"
+          echo "build_from=${build_from}" >> "$GITHUB_OUTPUT"
 
       - name: Cache docker layers
         uses: actions/cache@v4
@@ -113,7 +125,7 @@ jobs:
           sbom: false
           tags: local/${{ matrix.addon }}-${{ matrix.arch }}:test
           build-args: |
-            BUILD_FROM=${{ fromJSON(steps.information.outputs.build_from)[matrix.arch] }}
+            BUILD_FROM=${{ steps.information.outputs.build_from }}
           cache-from: type=local,src=/tmp/buildx-cache/${{ matrix.arch }}
           cache-to: type=local,dest=/tmp/buildx-cache-new/${{ matrix.arch }}
 
