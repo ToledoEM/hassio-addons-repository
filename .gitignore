@@ -13,9 +13,6 @@ sync-addons.sh.deprecated
 npm-*.json
 npm-*.md
 
-# WIP add-on plan (local, not for the repo)
-CATALOGUECANVAS_ADDON_PLAN.md
-
 # Claude Code Status Bank / local instructions (not for the repo)
 CLAUDE.md
 CLAUDE-*.md

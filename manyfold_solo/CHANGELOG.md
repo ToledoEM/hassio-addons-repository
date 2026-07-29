@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.147.0_1
+
+- Added lines for fedora install in Dockerfile
+- Version bump to 0.147.0 
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.147.0>
+
 ## 0.146.0_2
 
 - Fixed `public_hostname` auto-detection: was querying the Supervisor's own `/info` hostname instead of the HA host's; now queries `/host/info` and requires `hassio_role: homeassistant`.
