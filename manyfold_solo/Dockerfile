@@ -4,13 +4,16 @@ FROM ${BUILD_FROM}
 # hadolint ignore=DL3008,DL3018
 RUN set -eux; \
     if command -v apk >/dev/null 2>&1; then \
-      apk add --no-cache bash coreutils jq openssl ca-certificates; \
+      apk add --no-cache bash coreutils jq openssl; \
     elif command -v apt-get >/dev/null 2>&1; then \
       apt-get update; \
       apt-get install -y --no-install-recommends bash coreutils jq openssl ca-certificates; \
       rm -rf /var/lib/apt/lists/*; \
+    elif command -v dnf >/dev/null 2>&1; then \
+      dnf install -y bash coreutils jq openssl; \
+      dnf clean all; \
     else \
-      echo "Unsupported base image: missing apk/apt-get"; \
+      echo "Unsupported base image: missing apk/apt-get/dnf"; \
       exit 1; \
     fi
 
