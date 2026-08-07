@@ -73,10 +73,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: bash .github/scripts/check_addon_update.sh "${{ matrix.addon }}" "$DRY_RUN"
 
-      - name: Regenerate README add-on table
-        if: env.DRY_RUN != 'true' && steps.check.outputs.updated == 'true'
-        run: uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
-
       - name: Open update PR
         if: env.DRY_RUN != 'true' && steps.check.outputs.updated == 'true'
         env:
@@ -100,7 +96,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git add "${SLUG}/config.yaml" "${SLUG}/CHANGELOG.md" "${SLUG}/updater.json" README.md
+          git add "${SLUG}/config.yaml" "${SLUG}/CHANGELOG.md" "${SLUG}/updater.json"
           git commit -m "bot: update ${SLUG} to ${NEW_VERSION}"
           git push --force origin "$BRANCH"
 
