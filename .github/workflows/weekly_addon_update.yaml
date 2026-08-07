@@ -49,7 +49,7 @@ jobs:
     env:
       # schedule runs stay dry-run until manually switched to a
       # workflow_dispatch run (or this default is flipped) — see plan
-      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'true' }}
+      DRY_RUN: ${{ github.event_name != 'workflow_dispatch' && 'true' || inputs.dry_run }}
     strategy:
       fail-fast: false
       matrix:
