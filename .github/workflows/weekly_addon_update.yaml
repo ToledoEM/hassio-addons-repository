@@ -86,12 +86,23 @@ jobs:
           CHANGELOG_LINK: ${{ steps.check.outputs.changelog_link }}
         run: |
           BRANCH="bot/update-${SLUG}-${NEW_VERSION}"
+
+          # A prior run may have pushed this branch and then failed before
+          # (or while) opening the PR. If a PR is already open for it,
+          # there's nothing left to do. Otherwise the branch is stale
+          # leftover from that failure and safe to overwrite.
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' || true)
+          if [ -n "$EXISTING_PR" ]; then
+            echo "$SLUG: PR #$EXISTING_PR already open for $BRANCH, nothing to do"
+            exit 0
+          fi
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add "${SLUG}/config.yaml" "${SLUG}/CHANGELOG.md" "${SLUG}/updater.json" README.md
           git commit -m "bot: update ${SLUG} to ${NEW_VERSION}"
-          git push origin "$BRANCH"
+          git push --force origin "$BRANCH"
 
           BODY_FILE=$(mktemp)
           {
