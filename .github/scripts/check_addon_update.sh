@@ -45,7 +45,7 @@ fetch_dockerhub_tag() {
   fi
   curl -fsSL "https://hub.docker.com/v2/repositories/${ns}/${image}/tags?page_size=100" \
     | jq -r '.results[].name' \
-    | rg -x "$pattern" \
+    | grep -xE "$pattern" \
     | sort -V \
     | tail -n 1
 }
