@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026.08.07
+
+- Automated upstream update to sha256:45923357f7c023ac20792913e14c399713f5bbd7a56e60c57adf3146a1c90c56.
+- Details: <https://github.com/manyfold3d/manyfold-solo/pkgs/container/manyfold-solo>
+
 ## 0.147.1_1
 
 - Version bump to 0.147.1

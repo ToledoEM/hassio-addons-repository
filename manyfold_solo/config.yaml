@@ -1,7 +1,7 @@
 name: "Manyfold"
 slug: manyfold_solo
 description: "Manyfold 3D model manager as a Home Assistant add-on, using the manyfold-solo image with configurable library/index paths."
-version: "0.147.1_1"
+version: "2026.08.07"
 url: "https://github.com/ToledoEM/ManyFoldHA_app/tree/main/manyfold_solo"
 arch:
   - amd64
@@ -10,19 +10,15 @@ startup: services
 init: false
 hassio_api: true
 hassio_role: homeassistant
-
 ports:
   3214/tcp: 3214
 ports_description:
   3214/tcp: "Manyfold Web UI"
-
 webui: "http://[HOST]:[PORT:3214]"
-
 map:
   - addon_config:rw
   - share:rw
   - media:rw
-
 options:
   secret_key_base: ""
   public_hostname: ""
@@ -38,7 +34,6 @@ options:
   performance_worker_concurrency: 1
   max_file_upload_size: 1073741824
   max_file_extract_size: 1073741824
-
 schema:
   secret_key_base: str
   public_hostname: str?
@@ -54,5 +49,4 @@ schema:
   performance_worker_concurrency: int
   max_file_upload_size: int
   max_file_extract_size: int
-
 image: "ghcr.io/toledoem/manyfold_solo-{arch}"
