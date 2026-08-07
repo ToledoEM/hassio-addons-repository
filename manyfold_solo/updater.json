@@ -1,6 +1,6 @@
 {
-  "source": "ghcr",
-  "upstream_repo": "manyfold3d/manyfold-solo",
-  "upstream_version": "",
-  "last_update": "2026-08-06"
+  "source": "github",
+  "upstream_repo": "manyfold3d/manyfold",
+  "upstream_version": "0.147.1",
+  "last_update": "2026-08-07"
 }
