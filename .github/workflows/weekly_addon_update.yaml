@@ -1,0 +1,107 @@
+name: Weekly Addon Update
+
+on:
+  schedule:
+    - cron: "0 4 * * 6"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Log planned changes without opening PRs"
+        type: boolean
+        default: true
+
+jobs:
+  check-resolver:
+    name: Resolver selftest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Run resolver selftest
+        run: uv run --with awesomeversion python3 .github/scripts/addon_version_resolver.py --selftest
+
+  list-addons:
+    name: List addons
+    runs-on: ubuntu-latest
+    outputs:
+      addons: ${{ steps.list.outputs.addons }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Build addon matrix from addons.txt
+        id: list
+        run: |
+          addons=$(jq -R -s -c 'split("\n") | map(select(length > 0))' addons.txt)
+          echo "addons=$addons" >> "$GITHUB_OUTPUT"
+
+  update-addon:
+    name: Check ${{ matrix.addon }}
+    needs: [check-resolver, list-addons]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      # schedule runs stay dry-run until manually switched to a
+      # workflow_dispatch run (or this default is flipped) — see plan
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        addon: ${{ fromJSON(needs.list-addons.outputs.addons) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install yq and skopeo
+        run: |
+          sudo snap install yq
+          sudo apt-get update -y
+          sudo apt-get install -y skopeo
+
+      - name: Check for upstream update
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/check_addon_update.sh "${{ matrix.addon }}" "$DRY_RUN"
+
+      - name: Regenerate README add-on table
+        if: env.DRY_RUN != 'true' && steps.check.outputs.updated == 'true'
+        run: uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
+
+      - name: Open update PR
+        if: env.DRY_RUN != 'true' && steps.check.outputs.updated == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLUG: ${{ steps.check.outputs.slug }}
+          NEW_VERSION: ${{ steps.check.outputs.new_version }}
+          CHANGELOG_LINK: ${{ steps.check.outputs.changelog_link }}
+        run: |
+          BRANCH="bot/update-${SLUG}-${NEW_VERSION}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add "${SLUG}/config.yaml" "${SLUG}/CHANGELOG.md" "${SLUG}/updater.json" README.md
+          git commit -m "bot: update ${SLUG} to ${NEW_VERSION}"
+          git push origin "$BRANCH"
+
+          BODY_FILE=$(mktemp)
+          {
+            printf 'Automated upstream update for `%s` to `%s`.\n\n' "$SLUG" "$NEW_VERSION"
+            printf 'Details: <%s>\n\n' "$CHANGELOG_LINK"
+            printf 'Merging this PR does not build or publish the image by itself. Once merged, `tag_on_merge.yaml` tags this addon'"'"'s new version automatically, which triggers the build/publish workflow.\n'
+          } > "$BODY_FILE"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "bot: update ${SLUG} to ${NEW_VERSION}" \
+            --body-file "$BODY_FILE"

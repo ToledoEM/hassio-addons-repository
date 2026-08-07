@@ -1,0 +1,62 @@
+name: Tag on merge
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag-updated-addons:
+    name: Tag addons with bumped versions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - name: Find changed config.yaml files
+        id: find_addons
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            changed_config_files=$(git diff --name-only HEAD^ HEAD | grep -E '^[^/]+/config\.(json|ya?ml)$' || true)
+          else
+            changed_config_files=""
+          fi
+          echo "Changed config files: $changed_config_files"
+          changed_addons=$(printf '%s' "$changed_config_files" | awk -F/ '{print $1}' | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "changed_addons=$changed_addons" >> "$GITHUB_OUTPUT"
+
+      - name: Tag each changed addon
+        if: steps.find_addons.outputs.changed_addons != '[]'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          for slug in $(echo '${{ steps.find_addons.outputs.changed_addons }}' | jq -r '.[]'); do
+            updater_json="${slug}/updater.json"
+            if [ -f "$updater_json" ] && [ "$(jq -r '.paused // false' "$updater_json")" = "true" ]; then
+              echo "$slug: updater paused, skipping auto-tag"
+              continue
+            fi
+
+            version=$(yq -r '.version' "${slug}/config.yaml")
+            if [ -z "$version" ] || [ "$version" = "null" ]; then
+              echo "::warning::$slug: no version found in config.yaml, skipping"
+              continue
+            fi
+
+            tag="${slug}@${version}"
+            if git rev-parse "refs/tags/$tag" >/dev/null 2>&1 || git ls-remote --tags origin "refs/tags/$tag" | grep -q .; then
+              echo "$slug: tag $tag already exists, skipping"
+              continue
+            fi
+
+            echo "$slug: tagging $tag"
+            git tag "$tag"
+            git push origin "$tag"
+          done
