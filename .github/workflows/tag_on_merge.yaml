@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -68,16 +69,47 @@ jobs:
       - name: Regenerate README add-on table
         run: uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
 
-      - name: Commit README if changed
+      - name: Open README sync PR if changed
         env:
           GH_TOKEN: ${{ secrets.TAG_PUSH_TOKEN }}
         run: |
-          if [ -n "$(git status --porcelain README.md)" ]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -z "$(git status --porcelain README.md)" ]; then
+            echo "README.md unchanged, nothing to do"
+            exit 0
+          fi
+
+          BRANCH="bot/sync-readme"
+
+          # main is protected (PR required), so this can never push
+          # directly. If a sync PR is already open, add this run's
+          # change on top of it instead of opening a second one.
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' || true)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$EXISTING_PR" ]; then
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
+            if [ -z "$(git status --porcelain README.md)" ]; then
+              echo "README.md matches existing sync PR #$EXISTING_PR, nothing to add"
+              exit 0
+            fi
             git add README.md
             git commit -m "bot: sync README add-on table"
-            git push origin main
-          else
-            echo "README.md unchanged, nothing to commit"
+            git push origin "$BRANCH"
+            echo "Updated existing PR #$EXISTING_PR"
+            exit 0
           fi
+
+          git checkout -b "$BRANCH"
+          git add README.md
+          git commit -m "bot: sync README add-on table"
+          git push --force origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "bot: sync README add-on table" \
+            --body "Regenerates the add-on table in README.md from each addon's config.yaml. Opened automatically because main is protected and this workflow can no longer push directly."
