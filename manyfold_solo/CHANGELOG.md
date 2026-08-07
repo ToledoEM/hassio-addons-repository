@@ -2,13 +2,13 @@
 
 ## 0.147.1_1
 
-- Version bump to 0.147.1 
+- Version bump to 0.147.1
 - Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.147.1>
 
 ## 0.147.0_1
 
 - Added lines for fedora install in Dockerfile
-- Version bump to 0.147.0 
+- Version bump to 0.147.0
 - Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.147.0>
 
 ## 0.146.0_2
