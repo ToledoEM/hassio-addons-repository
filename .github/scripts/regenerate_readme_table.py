@@ -38,6 +38,7 @@ def main() -> int:
     content = README.read_text()
     pattern = re.compile(
         r"(## Add-ons\n)"
+        r"\n?"
         r"\| Icon \| Name \| Slug \| Version \| Description \|\n"
         r"\| :--- \| :--- \| :--- \| :--- \| :--- \|\n"
         r"(?:\|.*\|\n)*"
