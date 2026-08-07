@@ -30,7 +30,8 @@ jobs:
         id: find_changelog
         run: |
           changed_changelogs=$(git diff --name-only "origin/${{ github.base_ref }}" "${{ github.sha }}" | grep -iE '^[^/]+/CHANGELOG\.md$' || true)
-          echo "changed_changelogs=$changed_changelogs" >> "$GITHUB_OUTPUT"
+          changed_changelogs_json=$(printf '%s' "$changed_changelogs" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "changed_changelogs=$changed_changelogs_json" >> "$GITHUB_OUTPUT"
 
   check-changelog:
     name: Check CHANGELOG.md updated
@@ -44,7 +45,7 @@ jobs:
     steps:
       - name: Check for updated CHANGELOG.md
         run: |
-          if [[ ! "${{ needs.check-addon-changes.outputs.changedChangelogFiles }}" =~ "${{ matrix.addon }}/CHANGELOG.md" ]]; then
+          if ! echo '${{ needs.check-addon-changes.outputs.changedChangelogFiles }}' | jq -e --arg f "${{ matrix.addon }}/CHANGELOG.md" 'index($f) != null' > /dev/null; then
             echo "::error::No new entry in ${{ matrix.addon }}/CHANGELOG.md!"
             exit 1
           fi
