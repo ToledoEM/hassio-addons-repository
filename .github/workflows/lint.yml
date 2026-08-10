@@ -85,6 +85,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.TAG_PUSH_TOKEN }}
 
       - name: Fix non-printable Unicode spaces in all text files
         run: |
@@ -128,14 +129,51 @@ jobs:
       - name: Remove Super-Linter output
         run: sudo rm -rf super-linter-output/
 
-      - name: Commit and push if changes
+      - name: Open lint autofix PR if changes
+        env:
+          GH_TOKEN: ${{ secrets.TAG_PUSH_TOKEN }}
         run: |
-          if git diff --quiet; then
+          if [ -z "$(git status --porcelain)" ]; then
             echo "No changes detected"
             exit 0
           fi
+
+          BRANCH="bot/lint-autofix"
+
+          # main is protected (PR required), so this can never push
+          # directly. If an autofix PR is already open, stack this run's
+          # fixes on top of it instead of opening a second one.
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' || true)
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$EXISTING_PR" ]; then
+            # The linters already ran and can't be cheaply re-run, so carry
+            # the fixed working tree over to the existing PR branch.
+            git stash push --include-untracked
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git stash pop
+            git add -A
+            if git diff --cached --quiet; then
+              echo "Fixes match existing autofix PR #$EXISTING_PR, nothing to add"
+              exit 0
+            fi
+            git commit -m "fix: auto-fix linting issues"
+            git push origin "$BRANCH"
+            echo "Updated existing PR #$EXISTING_PR"
+            exit 0
+          fi
+
+          # No PR open, so any leftover branch is stale from a failed run.
+          git checkout -b "$BRANCH"
           git add -A
           git commit -m "fix: auto-fix linting issues"
-          git push origin main
+          git push --force origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "fix: auto-fix linting issues" \
+            --body "Applies Super Linter and shfmt autofixes across the codebase. Opened automatically because main is protected and this workflow can no longer push directly."
