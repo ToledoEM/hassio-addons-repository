@@ -87,6 +87,20 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.TAG_PUSH_TOKEN }}
 
+      # Runs before the linters so shfmt and prettier format files that
+      # already have LF endings, rather than having their output rewritten.
+      - name: Find and fix CRLF endings
+        run: |
+          find . -type f \
+            -not -path './.git/*' \
+            -not -name '*.png' \
+            -not -name '*.jpg' \
+            -not -name '*.bin' \
+            -exec grep -l $'\r' {} \; | while read file; do
+            dos2unix -k "$file"
+            echo "Fixed: $file"
+          done
+
       - name: Fix non-printable Unicode spaces in all text files
         run: |
           set -euo pipefail
@@ -176,4 +190,4 @@ jobs:
             --base main \
             --head "$BRANCH" \
             --title "fix: auto-fix linting issues" \
-            --body "Applies Super Linter and shfmt autofixes across the codebase. Opened automatically because main is protected and this workflow can no longer push directly."
+            --body "Applies CRLF, Super Linter and shfmt autofixes across the codebase. Opened automatically because main is protected and this workflow can no longer push directly."
