@@ -1,7 +1,7 @@
 # Changelog
 
 
-## 3.5.2-1
+## 3.5.2
 
 - Initial release: couchdb:3.5.2 as an Obsidian Self-hosted LiveSync backend, bundled with Nginx Proxy Manager for TLS and certificate management
 - NPM admin UI on port 81; HTTPS on 443; CouchDB also reachable directly on 5984

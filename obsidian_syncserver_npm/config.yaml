@@ -1,7 +1,7 @@
 name: "Obsidian Sync Server NPM"
 slug: obsidian_syncserver_npm
 description: "Self-hosted Obsidian LiveSync backend on CouchDB, bundled with Nginx Proxy Manager for TLS and certificate management."
-version: "3.5.2-1"
+version: "3.5.2"
 url: "https://github.com/ToledoEM/hassio-addons-repository/tree/main/obsidian_syncserver_npm"
 arch:
   - amd64

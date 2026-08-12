@@ -55,8 +55,8 @@ Setting `"paused": true` in `updater.json` skips the addon entirely, with the re
 A paused addon is skipped by `tag_on_merge.yaml` as well, so bumping its version in a PR does **not** produce a tag or trigger a build. Publishing one means pushing the tag yourself:
 
 ```bash
-git tag obsidian_syncserver_npm@3.5.2-1
-git push origin obsidian_syncserver_npm@3.5.2-1
+git tag obsidian_syncserver_npm@3.5.2
+git push origin obsidian_syncserver_npm@3.5.2
 ```
 
 ## Picking the version to write
