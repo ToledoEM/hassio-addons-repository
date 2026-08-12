@@ -4,6 +4,7 @@
 [![PR Check](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/pr-check.yaml/badge.svg)](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/pr-check.yaml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/ToledoEM/hassio-addons-repository)](https://github.com/ToledoEM/hassio-addons-repository/commits/main)
+[![Weekly Addon Update](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/weekly_addon_update.yaml/badge.svg)](https://github.com/ToledoEM/hassio-addons-repository/actions/workflows/weekly_addon_update.yaml)
 
 Experimental Home Assistant add-ons by toledoem for toledoem, feel free to try.
 
