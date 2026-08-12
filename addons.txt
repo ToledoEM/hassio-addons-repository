@@ -4,3 +4,6 @@ stirling_pdf_fat
 stirling_pdf_full
 stirling_pdf_ultra_lite
 nginx_webserver_proxy
+obsidian_syncserver_solo
+obsidian_syncserver_ssl
+obsidian_syncserver_npm

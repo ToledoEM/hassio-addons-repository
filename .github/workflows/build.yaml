@@ -17,6 +17,12 @@ on:
       - "stirling_pdf_ultra_lite@*"
       - "nginx_webserver_proxy-*"
       - "nginx_webserver_proxy@*"
+      - "obsidian_syncserver_solo-*"
+      - "obsidian_syncserver_solo@*"
+      - "obsidian_syncserver_ssl-*"
+      - "obsidian_syncserver_ssl@*"
+      - "obsidian_syncserver_npm-*"
+      - "obsidian_syncserver_npm@*"
   workflow_dispatch:
     inputs:
       addon:
@@ -31,6 +37,9 @@ on:
           - stirling_pdf_full
           - stirling_pdf_ultra_lite
           - nginx_webserver_proxy
+          - obsidian_syncserver_solo
+          - obsidian_syncserver_ssl
+          - obsidian_syncserver_npm
 
 jobs:
   build:
@@ -51,6 +60,9 @@ jobs:
           - stirling_pdf_full
           - stirling_pdf_ultra_lite
           - nginx_webserver_proxy
+          - obsidian_syncserver_solo
+          - obsidian_syncserver_ssl
+          - obsidian_syncserver_npm
         arch:
           - amd64
           - aarch64
@@ -156,6 +168,58 @@ jobs:
         with:
           arch: ${{ matrix.arch }}
           context: nginx_webserver_proxy
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
+          cache-gha: "false"
+          cosign: "false"
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push obsidian_syncserver_solo
+        if: matrix.addon == 'obsidian_syncserver_solo' && (startsWith(github.ref_name, 'obsidian_syncserver_solo') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'obsidian_syncserver_solo'))
+        uses: home-assistant/builder/actions/build-image@2026.03.2
+        with:
+          arch: ${{ matrix.arch }}
+          context: obsidian_syncserver_solo
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=couchdb:3.5.2
+          cache-gha: "false"
+          cosign: "false"
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push obsidian_syncserver_ssl
+        if: matrix.addon == 'obsidian_syncserver_ssl' && (startsWith(github.ref_name, 'obsidian_syncserver_ssl') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'obsidian_syncserver_ssl'))
+        uses: home-assistant/builder/actions/build-image@2026.03.2
+        with:
+          arch: ${{ matrix.arch }}
+          context: obsidian_syncserver_ssl
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=couchdb:3.5.2
+          cache-gha: "false"
+          cosign: "false"
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Merges two upstream images, so both are pulled before the build.
+      - name: Pre-pull obsidian_syncserver_npm base images
+        if: matrix.addon == 'obsidian_syncserver_npm' && (startsWith(github.ref_name, 'obsidian_syncserver_npm') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'obsidian_syncserver_npm'))
+        run: |
+          docker pull jc21/nginx-proxy-manager:latest
+          docker pull couchdb:3.5.2
+
+      - name: Build and push obsidian_syncserver_npm
+        if: matrix.addon == 'obsidian_syncserver_npm' && (startsWith(github.ref_name, 'obsidian_syncserver_npm') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'obsidian_syncserver_npm'))
+        uses: home-assistant/builder/actions/build-image@2026.03.2
+        with:
+          arch: ${{ matrix.arch }}
+          context: obsidian_syncserver_npm
           image: ${{ steps.meta.outputs.image }}
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
