@@ -5,7 +5,7 @@
 ## Step by step
 
 - **Saturday 04:00 UTC** (or manual trigger), `weekly_addon_update.yaml` runs
-- For each of the 6 addons, independently:
+- For each of the 9 addons, independently:
   - Reads `<addon>/updater.json` to find its upstream source (Docker Hub, GitHub Releases, or ghcr digest)
   - Fetches the latest upstream version
   - Runs it through `addon_version_resolver.py` to get a Home Assistant–compliant version string
@@ -47,7 +47,17 @@ Every addon directory has an `updater.json` that tells the workflow where to loo
 - **github** — reads `tag_name` from the repo's latest GitHub release.
 - **ghcr** — the addon's image only ever ships as `:latest`, so there's no version tag to read. The workflow compares the image digest instead. When the digest changes, it treats that as a new build and assigns a calendar-style version (today's date) rather than inventing a fake semver.
 
-Setting `"paused": true` in `updater.json` skips the addon entirely, with the reason logged from `"paused_reason"`. `nginx_webserver_proxy` is paused right now — 2.15.x's larger base image trips a memory limit in the build pipeline, tracked in [issue #4](https://github.com/ToledoEM/hassio-addons-repository/issues/4). It'll stay pinned to 2.14.x until that's sorted out.
+Setting `"paused": true` in `updater.json` skips the addon entirely, with the reason logged from `"paused_reason"`. Two addons are paused right now:
+
+- `nginx_webserver_proxy` — 2.15.x's larger base image trips a memory limit in the build pipeline, tracked in [issue #4](https://github.com/ToledoEM/hassio-addons-repository/issues/4). It'll stay pinned to 2.14.x until that's sorted out.
+- `obsidian_syncserver_npm` — it merges two upstream images (`couchdb` and `jc21/nginx-proxy-manager`), and the updater tracks one upstream per addon. It also inherits the same NPM base image constraint. Its version is bumped by hand.
+
+A paused addon is skipped by `tag_on_merge.yaml` as well, so bumping its version in a PR does **not** produce a tag or trigger a build. Publishing one means pushing the tag yourself:
+
+```bash
+git tag obsidian_syncserver_npm@3.5.2
+git push origin obsidian_syncserver_npm@3.5.2
+```
 
 ## Picking the version to write
 
@@ -72,7 +82,7 @@ In the PR (bot branch, scoped to one addon):
 After the PR is merged, handled by `tag_on_merge.yaml`:
 
 - A `<slug>@<version>` tag, pushed directly (tags aren't affected by branch protection)
-- `README.md` — the addon table row, regenerated from all six `config.yaml` files. If it changed, it goes into its own small PR (`bot/sync-readme`), not a direct commit — see below.
+- `README.md` — the addon table row, regenerated from all nine `config.yaml` files. If it changed, it goes into its own small PR (`bot/sync-readme`), not a direct commit — see below.
 
 Bot PRs never touch `README.md` directly — that's deliberate. Two PRs updating different addons in the same week both used to diff the same README table lines, so whichever merged first left the other in a merge-conflict state. Moving the regeneration to a post-merge step removes that entirely, since there's only ever one README change in flight at a time.
 

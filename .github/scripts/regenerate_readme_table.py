@@ -28,11 +28,13 @@ def addon_row(slug: str) -> str:
 
 
 def main() -> int:
-    slugs = [
+    # Sorted here rather than relying on addons.txt, so appending a new addon
+    # to the end of that file still lands the row in the right place.
+    slugs = sorted(
         line.strip()
         for line in ADDONS_TXT.read_text().splitlines()
         if line.strip()
-    ]
+    )
     rows = "".join(addon_row(slug) for slug in slugs)
 
     content = README.read_text()
