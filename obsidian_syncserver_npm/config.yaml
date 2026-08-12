@@ -22,9 +22,6 @@ ports_description:
 
 webui: "http://[HOST]:[PORT:81]"
 
-panel_icon: mdi:notebook-edit-outline
-panel_title: Obsidian Sync
-
 map:
   - addon_config:rw
 

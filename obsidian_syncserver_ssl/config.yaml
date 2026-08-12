@@ -16,11 +16,6 @@ ports_description:
   5984/tcp: "CouchDB HTTP"
   6984/tcp: "CouchDB HTTPS — use this for mobile Obsidian"
 
-webui: "https://[HOST]:[PORT:6984]/_utils"
-
-panel_icon: mdi:notebook-check-outline
-panel_title: Obsidian Sync
-
 map:
   - addon_config:rw
   - ssl:ro
