@@ -14,11 +14,6 @@ ports:
 ports_description:
   5984/tcp: "CouchDB HTTP — add a reverse proxy for mobile Obsidian"
 
-webui: "http://[HOST]:[PORT:5984]/_utils"
-
-panel_icon: mdi:notebook-outline
-panel_title: Obsidian Sync
-
 map:
   - addon_config:rw
 
