@@ -90,6 +90,7 @@ jobs:
 
           if [ -n "$EXISTING_PR" ]; then
             git fetch origin "$BRANCH"
+            git checkout -- README.md
             git checkout -B "$BRANCH" "origin/$BRANCH"
             uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
             if [ -z "$(git status --porcelain README.md)" ]; then
