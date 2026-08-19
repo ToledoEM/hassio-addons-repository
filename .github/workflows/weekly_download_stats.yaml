@@ -1,0 +1,102 @@
+name: Weekly Download Stats
+
+on:
+  # Two hours after weekly_addon_update.yaml, so the two never race to open
+  # PRs in the same window.
+  schedule:
+    - cron: "0 6 * * 6"
+  workflow_dispatch:
+
+jobs:
+  download-stats:
+    name: Refresh add-on download plot
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.TAG_PUSH_TOKEN }}
+
+      - name: Install ripgrep
+        run: sudo apt-get update -y && sudo apt-get install -y ripgrep
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+
+      - name: Install R packages
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: |
+            any::ggplot2
+            any::jsonlite
+            any::dplyr
+            any::xkcd
+            any::showtext
+            any::patchwork
+
+      - name: Download xkcd font
+        run: curl -sSfL https://toledoem.github.io/img/xkcd.ttf -o "${RUNNER_TEMP}/xkcd.ttf"
+
+      - name: Collect download counts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/fetch_download_stats.sh
+
+      - name: Render plot
+        run: |
+          Rscript .github/scripts/plot_download_stats.R \
+            .github/stats/downloads.json \
+            .github/stats/downloads.png \
+            "${RUNNER_TEMP}/xkcd.ttf"
+
+      - name: Open stats PR if changed
+        env:
+          GH_TOKEN: ${{ secrets.TAG_PUSH_TOKEN }}
+        run: |
+          if [ -z "$(git status --porcelain .github/stats/)" ]; then
+            echo "download stats unchanged, nothing to do"
+            exit 0
+          fi
+
+          BRANCH="bot/update-stats"
+
+          # main is protected (PR required), so this can never push directly.
+          # If a stats PR is already open, add this run's change on top of it
+          # instead of opening a second one.
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number' || true)
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          if [ -n "$EXISTING_PR" ]; then
+            git stash push -- .github/stats/
+            git fetch origin "$BRANCH"
+            git checkout -B "$BRANCH" "origin/$BRANCH"
+            git checkout stash@{0} -- .github/stats/
+            git stash drop
+            if [ -z "$(git status --porcelain .github/stats/)" ]; then
+              echo "stats match existing PR #$EXISTING_PR, nothing to add"
+              exit 0
+            fi
+            git add .github/stats/
+            git commit -m "bot: update download stats"
+            git push origin "$BRANCH"
+            echo "Updated existing PR #$EXISTING_PR"
+            exit 0
+          fi
+
+          git checkout -b "$BRANCH"
+          git add .github/stats/
+          git commit -m "bot: update download stats"
+          git push --force origin "$BRANCH"
+
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "bot: update download stats" \
+            --body "Refreshes the add-on download plot in README.md from the GHCR package pull counts. Opened automatically because main is protected and this workflow cannot push directly."

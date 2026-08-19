@@ -37,4 +37,11 @@ https://github.com/ToledoEM/hassio-addons-repository
 | <img src="stirling_pdf_full/icon.png" width="150" height="150" /> | [Stirling-PDF Full](stirling_pdf_full/README.md) | stirling_pdf_full | 2.14.3 | Stirling-PDF Full — all features pre-configured: merge, split, compress, convert, sign, annotate, OCR, and more. |
 | <img src="stirling_pdf_ultra_lite/icon.png" width="150" height="150" /> | [Stirling-PDF Ultra-Lite](stirling_pdf_ultra_lite/README.md) | stirling_pdf_ultra_lite | 2.14.3-ultra-lite | Stirling-PDF Ultra-Lite — minimal install with core PDF operations: merge, split, rotate, convert, password protection. Smallest image. |
 
+## Downloads
+
+![Add-on image pulls: lifetime total, pulls per month available, and split by architecture](.github/stats/downloads.png)
+
+Counts are GHCR image pulls, refreshed weekly — not install counts.    
+Plots made with R + [XKCD theme for ggplot](https://github.com/ToledoEM/xkcd)
+
 //Enjoy
