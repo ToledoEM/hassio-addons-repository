@@ -10,3 +10,6 @@ release-addons-monorepo.sh
 # Local NPM proxy configs (personal, not for the repo)
 npm-*.json
 npm-*.md
+
+# Fetched at render time; CC BY-NC, not vendored into this MIT repo
+.github/stats/xkcd.ttf
