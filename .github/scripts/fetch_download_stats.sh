@@ -26,8 +26,8 @@ scrape_all() {
 
     page=$(curl -sL "https://github.com/$OWNER/$REPO/pkgs/container/$pkg")
 
-    count=$(rg -U -o 'Total downloads</span>\s*<h3 title="([0-9,]+)"' -r '$1' <<<"$page" |
-      tr -d ',') || true
+    count=$(grep -Pzo 'Total downloads</span>\s*<h3 title="\K[0-9,]+' <<<"$page" |
+      tr -d '\0,') || true
 
     if [ -z "$count" ]; then
       echo "::warning::$pkg: could not read download count, skipping" >&2
