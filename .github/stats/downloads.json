@@ -1,0 +1,113 @@
+{
+  "generated": "2026-08-19",
+  "rows": [
+    {
+      "slug": "bentopdf",
+      "arch": "aarch64",
+      "downloads": 146,
+      "created": "2026-04-03T09:31:29Z"
+    },
+    {
+      "slug": "bentopdf",
+      "arch": "amd64",
+      "downloads": 145,
+      "created": "2026-04-03T09:31:21Z"
+    },
+    {
+      "slug": "manyfold_solo",
+      "arch": "aarch64",
+      "downloads": 331,
+      "created": "2026-04-03T09:31:26Z"
+    },
+    {
+      "slug": "manyfold_solo",
+      "arch": "amd64",
+      "downloads": 331,
+      "created": "2026-04-03T09:31:22Z"
+    },
+    {
+      "slug": "nginx_webserver_proxy",
+      "arch": "aarch64",
+      "downloads": 59,
+      "created": "2026-04-18T16:02:31Z"
+    },
+    {
+      "slug": "nginx_webserver_proxy",
+      "arch": "amd64",
+      "downloads": 66,
+      "created": "2026-04-18T16:02:19Z"
+    },
+    {
+      "slug": "obsidian_syncserver_npm",
+      "arch": "aarch64",
+      "downloads": 4,
+      "created": "2026-08-12T10:39:17Z"
+    },
+    {
+      "slug": "obsidian_syncserver_npm",
+      "arch": "amd64",
+      "downloads": 2,
+      "created": "2026-08-12T10:39:30Z"
+    },
+    {
+      "slug": "obsidian_syncserver_solo",
+      "arch": "aarch64",
+      "downloads": 4,
+      "created": "2026-08-12T10:31:21Z"
+    },
+    {
+      "slug": "obsidian_syncserver_solo",
+      "arch": "amd64",
+      "downloads": 0,
+      "created": "2026-08-12T10:31:20Z"
+    },
+    {
+      "slug": "obsidian_syncserver_ssl",
+      "arch": "aarch64",
+      "downloads": 2,
+      "created": "2026-08-12T10:31:29Z"
+    },
+    {
+      "slug": "obsidian_syncserver_ssl",
+      "arch": "amd64",
+      "downloads": 2,
+      "created": "2026-08-12T10:31:37Z"
+    },
+    {
+      "slug": "stirling_pdf_fat",
+      "arch": "aarch64",
+      "downloads": 16,
+      "created": "2026-05-20T12:36:15Z"
+    },
+    {
+      "slug": "stirling_pdf_fat",
+      "arch": "amd64",
+      "downloads": 34,
+      "created": "2026-05-20T12:35:30Z"
+    },
+    {
+      "slug": "stirling_pdf_full",
+      "arch": "aarch64",
+      "downloads": 131,
+      "created": "2026-04-03T09:31:49Z"
+    },
+    {
+      "slug": "stirling_pdf_full",
+      "arch": "amd64",
+      "downloads": 142,
+      "created": "2026-04-03T09:32:51Z"
+    },
+    {
+      "slug": "stirling_pdf_ultra_lite",
+      "arch": "aarch64",
+      "downloads": 15,
+      "created": "2026-05-26T14:21:18Z"
+    },
+    {
+      "slug": "stirling_pdf_ultra_lite",
+      "arch": "amd64",
+      "downloads": 24,
+      "created": "2026-05-26T14:20:52Z"
+    }
+  ]
+}
