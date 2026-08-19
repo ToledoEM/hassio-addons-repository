@@ -20,9 +20,6 @@ jobs:
         with:
           token: ${{ secrets.TAG_PUSH_TOKEN }}
 
-      - name: Install ripgrep
-        run: sudo apt-get update -y && sudo apt-get install -y ripgrep
-
       # Into the workspace, not RUNNER_TEMP: the render runs in a container
       # that only has the workspace mounted. Gitignored so the CC BY-NC font
       # is never committed into this MIT repo.
