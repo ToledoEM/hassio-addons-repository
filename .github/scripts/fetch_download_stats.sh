@@ -12,41 +12,47 @@ GENERATED="${GENERATED:-$(date -u +%Y-%m-%d)}"
 mkdir -p "$(dirname "$OUT")"
 
 scrape_all() {
-  gh api "users/$OWNER/packages?package_type=container&per_page=100" \
-    --jq ".[] | select(.repository.name==\"$REPO\") | .name" |
-  while read -r pkg; do
-    case "$pkg" in
-      *-amd64)   slug="${pkg%-amd64}";   arch=amd64 ;;
-      *-aarch64) slug="${pkg%-aarch64}"; arch=aarch64 ;;
-      *) continue ;;
-    esac
-    grep -qx "$slug" "$ADDONS_TXT" || continue
+    gh api "users/$OWNER/packages?package_type=container&per_page=100" \
+        --jq ".[] | select(.repository.name==\"$REPO\") | .name" \
+        | while read -r pkg; do
+            case "$pkg" in
+                *-amd64)
+                    slug="${pkg%-amd64}"
+                    arch=amd64
+                    ;;
+                *-aarch64)
+                    slug="${pkg%-aarch64}"
+                    arch=aarch64
+                    ;;
+                *) continue ;;
+            esac
+            grep -qx "$slug" "$ADDONS_TXT" || continue
 
-    created=$(gh api "users/$OWNER/packages/container/$pkg" --jq '.created_at')
+            created=$(gh api "users/$OWNER/packages/container/$pkg" --jq '.created_at')
 
-    page=$(curl -sL "https://github.com/$OWNER/$REPO/pkgs/container/$pkg")
+            page=$(curl -sL "https://github.com/$OWNER/$REPO/pkgs/container/$pkg")
 
-    count=$(grep -Pzo 'Total downloads</span>\s*<h3 title="\K[0-9,]+' <<<"$page" |
-      tr -d '\0,') || true
+            count=$(grep -Pzo 'Total downloads</span>\s*<h3 title="\K[0-9,]+' <<< "$page" \
+                | tr -d '\0,') || true
 
-    if [ -z "$count" ]; then
-      echo "::warning::$pkg: could not read download count, skipping" >&2
-      continue
-    fi
+            if [ -z "$count" ]; then
+                echo "::warning::$pkg: could not read download count, skipping" >&2
+                continue
+            fi
 
-    jq -nc --arg s "$slug" --arg a "$arch" --arg c "$created" --argjson n "$count" \
-      '{slug:$s, arch:$a, downloads:$n, created:$c}'
-  done
+            jq -nc --arg s "$slug" --arg a "$arch" --arg c "$created" --argjson n "$count" \
+                '{slug:$s, arch:$a, downloads:$n, created:$c}'
+        done
 }
 
 rows="$(scrape_all | jq -sc 'sort_by(.slug, .arch)')"
 
-if [ "$(jq 'length' <<<"$rows")" -eq 0 ]; then
-  echo "no download counts collected, refusing to write an empty file" >&2
-  exit 1
+if [ "$(jq 'length' <<< "$rows")" -eq 0 ]; then
+    echo "no download counts collected, refusing to write an empty file" >&2
+    exit 1
 fi
 
 jq -n --arg g "$GENERATED" --argjson rows "$rows" \
-  '{generated:$g, rows:$rows}' > "$OUT"
+    '{generated:$g, rows:$rows}' > "$OUT"
 
 echo "wrote $(jq '.rows | length' "$OUT") rows to $OUT"
