@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.8
+
+- Automated upstream update to 2.8.8.
+- Details: <https://github.com/alam00000/bentopdf/releases/tag/v2.8.8>
+
 ## 2.8.7
 
 - Bump version after new official image release

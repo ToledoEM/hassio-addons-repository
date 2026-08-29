@@ -1,7 +1,7 @@
 name: "BentoPDF"
 slug: bentopdf
 description: "Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device."
-version: "2.8.7"
+version: "2.8.8"
 url: "https://github.com/ToledoEM/BentoPDF_HA_app/tree/main/bentopdf"
 arch:
   - amd64
@@ -14,16 +14,12 @@ ports:
 ports_description:
   8080/tcp: "BentoPDF HTTP (health check / redirect to HTTPS)"
   8443/tcp: "BentoPDF HTTPS Web UI"
-
 webui: "https://[HOST]:[PORT:8443]"
 
 panel_icon: mdi:file-pdf-box
 panel_title: BentoPDF
-
 options:
   log_level: "info"
-
 schema:
   log_level: list(info|debug|warn|error)
-
 image: "ghcr.io/toledoem/bentopdf-{arch}"
