@@ -72,7 +72,7 @@ jobs:
     name: Test build
     needs: check-addon-changes
     if: ${{ needs.check-addon-changes.outputs.changedAddons != '[]' && needs.check-addon-changes.outputs.changedAddons != '' }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     env:
       BUILDX_NO_DEFAULT_ATTESTATIONS: "1"
     strategy:
@@ -80,6 +80,11 @@ jobs:
       matrix:
         addon: ${{ fromJSON(needs.check-addon-changes.outputs.changedAddons) }}
         arch: [amd64, aarch64]
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -109,9 +114,6 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-${{ hashFiles(format('{0}/Dockerfile', matrix.addon)) }}
           restore-keys: |
             ${{ runner.os }}-buildx-${{ matrix.addon }}-${{ matrix.arch }}-
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

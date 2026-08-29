@@ -36,4 +36,9 @@ LABEL \
   io.hass.type="addon" \
   io.hass.arch="aarch64|amd64"
 
+# Replaces the former config.yaml `watchdog` key. Hits the plain-HTTP health
+# endpoint on 8080, which nginx answers with a literal 200 "ok".
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD curl -fsS http://127.0.0.1:8080/ || exit 1
+
 ENTRYPOINT ["/init"]
