@@ -1,16 +1,16 @@
 {
-  "generated": "2026-08-22",
+  "generated": "2026-08-29",
   "rows": [
     {
       "slug": "bentopdf",
       "arch": "aarch64",
-      "downloads": 146,
+      "downloads": 148,
       "created": "2026-04-03T09:31:29Z"
     },
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 145,
+      "downloads": 147,
       "created": "2026-04-03T09:31:21Z"
     },
     {
@@ -94,7 +94,7 @@
     {
       "slug": "stirling_pdf_full",
       "arch": "amd64",
-      "downloads": 142,
+      "downloads": 144,
       "created": "2026-04-03T09:32:51Z"
     },
     {
