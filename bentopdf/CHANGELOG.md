@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.8.8-1
+
+- Switch to upstream's Simple Mode build, which drops the bentopdf.com marketing UI (nav bar, hero, features, FAQ, footer) and serves only the PDF tools. All 130 tools and the LibreOffice WebAssembly payload are unchanged.
+- Image size drops from roughly 252 MB to about 228 MB.
+- **Breaking:** the marketing UI is no longer available. There is no option to restore it.
+
 ## 2.8.8
 
 - Automated upstream update to 2.8.8.
