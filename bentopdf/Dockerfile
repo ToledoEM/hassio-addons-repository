@@ -2,14 +2,19 @@
 ARG BUILD_FROM=ghcr.io/home-assistant/amd64-base:3.23
 ARG BUILD_VERSION=2.8.2
 
-# Stage 1: Download and extract the BentoPDF dist release (includes bundled WASM)
+# Stage 1: Download and extract the BentoPDF dist release (includes bundled WASM).
+# Both the normal and Simple Mode builds are published as release assets, so we
+# fetch both and let run.sh pick one at startup via the simple_mode option.
 FROM alpine:3.21 AS dist
 ARG BUILD_VERSION
 # hadolint ignore=DL3018
 RUN apk add --no-cache curl unzip \
     && curl -fsSL "https://github.com/alam00000/bentopdf/releases/download/v${BUILD_VERSION}/dist-${BUILD_VERSION}.zip" \
        -o /tmp/bentopdf.zip \
-    && unzip /tmp/bentopdf.zip -d /tmp/dist
+    && unzip /tmp/bentopdf.zip -d /tmp/dist-full \
+    && curl -fsSL "https://github.com/alam00000/bentopdf/releases/download/v${BUILD_VERSION}/dist-simple-${BUILD_VERSION}.zip" \
+       -o /tmp/bentopdf-simple.zip \
+    && unzip /tmp/bentopdf-simple.zip -d /tmp/dist-simple
 
 # Stage 2: Final runtime image
 FROM ${BUILD_FROM}
@@ -21,7 +26,8 @@ RUN apk add --no-cache nginx openssl bash \
     && sed -i 's/nginx:x:100:101/nginx:x:0:0/' /etc/passwd \
     && sed -i 's/^nginx:x:101:/nginx:x:0:/' /etc/group
 
-COPY --from=dist /tmp/dist/ /usr/share/nginx/html/
+COPY --from=dist /tmp/dist-full/ /opt/bentopdf/full/
+COPY --from=dist /tmp/dist-simple/ /opt/bentopdf/simple/
 
 COPY run.sh /run.sh
 COPY rootfs /

@@ -20,6 +20,8 @@ panel_icon: mdi:file-pdf-box
 panel_title: BentoPDF
 options:
   log_level: "info"
+  simple_mode: false
 schema:
   log_level: list(info|debug|warn|error)
+  simple_mode: bool
 image: "ghcr.io/toledoem/bentopdf-{arch}"
