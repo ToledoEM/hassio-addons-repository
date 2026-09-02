@@ -2,6 +2,9 @@ configuration:
   log_level:
     name: Log level
     description: Controls the verbosity of add-on logging.
+  simple_mode:
+    name: Simple mode
+    description: Hides the bentopdf.com marketing UI (nav bar, hero, features, FAQ, footer, etc.) and keeps only the PDF tools.
 
 network:
   8080/tcp: Web UI port (direct access, not used for Ingress)

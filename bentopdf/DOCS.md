@@ -45,6 +45,7 @@ Yes. The certificate secures the connection between **your browser and your own 
 | Option | Default | Description |
 |--------|---------|-------------|
 | `log_level` | `info` | Log verbosity: `info`, `debug`, `warn`, `error` |
+| `simple_mode` | `false` | Hide the bentopdf.com marketing UI (nav bar, hero, features, FAQ, footer) and keep only the PDF tools |
 
 ## Support
 
