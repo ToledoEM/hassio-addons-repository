@@ -1,4 +1,5 @@
 bentopdf
+cataloguecanvas
 manyfold_solo
 nginx_webserver_proxy
 obsidian_syncserver_npm

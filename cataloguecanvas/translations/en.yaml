@@ -1,0 +1,44 @@
+configuration:
+  admin_password:
+    name: Admin password
+    description: >-
+      Password for the admin login. Required — CatalogueCanvas fails closed
+      (no admin login is possible) until this is set.
+  admin_username:
+    name: Admin username
+    description: Username for the admin account. Defaults to "admin".
+  site_title:
+    name: Site title
+    description: Display name shown in the UI and on public portfolios.
+  site_author:
+    name: Site author
+    description: Author attribution shown on public portfolios. Optional.
+  cookie_secure:
+    name: Secure cookies (HTTPS only)
+    description: >-
+      Leave OFF for plain-HTTP access over the LAN (the default for this add-on,
+      reached at port 8081). Turn ON only when serving the app behind HTTPS,
+      otherwise login will fail.
+  llm_allowed_hosts:
+    name: LLM allowed hosts
+    description: >-
+      Optional SSRF guard. Comma-separated list of hostnames the LLM feature may
+      contact (e.g. a LAN Ollama/LM Studio host). Leave blank to disable the LLM
+      integration's outbound calls.
+  max_upload_bytes:
+    name: Maximum upload size (bytes)
+    description: Largest single asset upload allowed. Default 1073741824 (1 GiB).
+  storage_path:
+    name: Storage directory
+    description: >-
+      Directory for uploaded assets. Must be under /media, /share, or /config.
+      Defaults to /media/cataloguecanvas — point this at a large volume, since
+      it is not included in Home Assistant backups (unlike /config).
+  puid:
+    name: PUID
+    description: User ID used to own the storage and config directories.
+  pgid:
+    name: PGID
+    description: Group ID used to own the storage and config directories.
+network:
+  8000/tcp: Web UI (open http://<ha-host>:8081 in a browser)

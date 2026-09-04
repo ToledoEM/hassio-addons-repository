@@ -7,6 +7,8 @@ on:
     tags:
       - "bentopdf-*"
       - "bentopdf@*"
+      - "cataloguecanvas-*"
+      - "cataloguecanvas@*"
       - "manyfold_solo-*"
       - "manyfold_solo@*"
       - "stirling_pdf_fat-*"
@@ -32,6 +34,7 @@ on:
         options:
           - all
           - bentopdf
+          - cataloguecanvas
           - manyfold_solo
           - stirling_pdf_fat
           - stirling_pdf_full
@@ -55,6 +58,7 @@ jobs:
       matrix:
         addon:
           - bentopdf
+          - cataloguecanvas
           - manyfold_solo
           - stirling_pdf_fat
           - stirling_pdf_full
@@ -93,6 +97,26 @@ jobs:
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}
           build-args: BUILD_FROM=ghcr.io/home-assistant/${{ matrix.arch }}-base:3.23
+          cache-gha: "false"
+          cosign: "false"
+          push: "true"
+          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Builds the app from source (React SPA + Python runtime) rather than
+      # layering on a prebuilt upstream image, so this is the slowest build here.
+      # BUILD_FROM is unused by the Dockerfile — it starts FROM python:3.14-alpine
+      # — but the builder action requires the arg, and pr-check.yaml requires a
+      # matching per-arch build_from entry in build.yaml.
+      - name: Build and push cataloguecanvas
+        if: matrix.addon == 'cataloguecanvas' && (startsWith(github.ref_name, 'cataloguecanvas') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'cataloguecanvas'))
+        uses: home-assistant/builder/actions/build-image@2026.03.2
+        with:
+          arch: ${{ matrix.arch }}
+          context: cataloguecanvas
+          image: ${{ steps.meta.outputs.image }}
+          image-tags: ${{ steps.meta.outputs.version }}
+          version: ${{ steps.meta.outputs.version }}
+          build-args: BUILD_FROM=python:3.14-alpine
           cache-gha: "false"
           cosign: "false"
           push: "true"
