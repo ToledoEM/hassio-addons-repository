@@ -97,6 +97,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git add "${SLUG}/config.yaml" "${SLUG}/CHANGELOG.md" "${SLUG}/updater.json"
+          # Add-ons that pin UPSTREAM_VERSION separately get their Dockerfile
+          # patched too; harmless no-op for the ones that don't.
+          git add "${SLUG}/Dockerfile"
           git commit -m "bot: update ${SLUG} to ${NEW_VERSION}"
           git push --force origin "$BRANCH"
 

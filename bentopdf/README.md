@@ -104,6 +104,12 @@ Search for "BentoPDF" and install directly from there and instructions how to ad
 
 No other configuration is needed. Drop your files in and go.
 
+### Simple Mode build
+
+This add-on ships upstream BentoPDF's **Simple Mode** build, which drops the bentopdf.com marketing UI — nav bar, hero, features, FAQ and footer — and serves only the PDF tools.
+
+Nothing is lost by this. Simple Mode carries the same 130 tool pages and the same LibreOffice WebAssembly payload as the standard build; only the marketing chrome is gone. It also makes the image smaller, about 228 MB against roughly 252 MB previously.
+
 ---
 
 ## Privacy
