@@ -64,8 +64,13 @@ ENV CC_DATA_DIR=/data \
     PATH="/app/server/.venv/bin:${PATH}"
 
 # --- HA add-on / s6-overlay wrapper layered on top of the app runtime ---
-ARG BUILD_ARCH
-ARG BUILD_VERSION
+# Defaulted so a bare `docker build` works. The s6-overlay step below runs under
+# `set -eux` and expands BUILD_ARCH, so leaving it unset aborts the build — which
+# is what pr-check.yaml does, since it passes only BUILD_FROM. Both real build
+# paths override these: build.yaml's home-assistant/builder injects BUILD_ARCH
+# and BUILD_VERSION itself.
+ARG BUILD_ARCH=amd64
+ARG BUILD_VERSION=0.2.2-1
 ARG S6_OVERLAY_VERSION=3.2.0.2
 
 # Bake add-on metadata into the image so run.sh can print it at startup.
