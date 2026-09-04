@@ -1,0 +1,26 @@
+#include <tunables/global>
+
+profile cataloguecanvas flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+  #include <abstractions/bash>
+  #include <abstractions/nameservice>
+  #include <abstractions/openssl>
+
+  # Broad file + network access: the uv/uvicorn/Python exec chain resolves
+  # interpreters and caches at unpredictable paths (/app, /root/.cache/uv, /tmp),
+  # so an enumerated exec/sub-profile model is not maintainable here.
+  file,
+  network,
+
+  # Capabilities actually exercised by run.sh running as root:
+  #   chown -R on /config and /media/cataloguecanvas  -> chown
+  #   writing/traversing root-owned volume trees       -> dac_override, fowner
+  capability chown,
+  capability dac_override,
+  capability fowner,
+
+  # Deny kernel/host escape surfaces that `file,` would otherwise grant.
+  deny /proc/kcore rwklx,
+  deny /proc/sysrq-trigger rwklx,
+  deny /sys/firmware/** rwklx,
+}

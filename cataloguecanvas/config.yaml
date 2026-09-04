@@ -1,0 +1,47 @@
+name: CatalogueCanvas
+version: "0.2.2-1"
+slug: cataloguecanvas
+image: ghcr.io/toledoem/cataloguecanvas-{arch}
+description: Organise your artwork, designs and creative files into catalogues and portfolios
+url: https://github.com/CatalogueCanvas/CatalogueCanvas
+arch:
+  - amd64
+  - aarch64
+startup: services
+init: false
+ports:
+  8000/tcp: 8081
+ports_description:
+  8000/tcp: Web UI (http://<ha-host>:8081)
+webui: "http://[HOST]:[PORT:8000]"
+map:
+  - type: addon_config
+    read_only: false
+  - type: media
+    read_only: false
+  - type: share
+    read_only: false
+  - type: homeassistant_config
+    read_only: true
+options:
+  admin_password: changeme
+  admin_username: admin
+  site_title: CatalogueCanvas
+  site_author: ""
+  cookie_secure: false
+  llm_allowed_hosts: ""
+  max_upload_bytes: 1073741824
+  storage_path: /media/cataloguecanvas
+  puid: 1000
+  pgid: 1000
+schema:
+  admin_password: password
+  admin_username: str
+  site_title: str
+  site_author: str?
+  cookie_secure: bool
+  llm_allowed_hosts: str?
+  max_upload_bytes: int(0,)
+  storage_path: str
+  puid: int
+  pgid: int

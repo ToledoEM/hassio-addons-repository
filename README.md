@@ -28,6 +28,7 @@ https://github.com/ToledoEM/hassio-addons-repository
 | Icon | Name | Slug | Version | Description |
 | :--- | :--- | :--- | :--- | :--- |
 | <img src="bentopdf/icon.png" width="150" height="150" /> | [BentoPDF](bentopdf/README.md) | bentopdf | 2.8.8-1 | Privacy-first PDF toolkit. 50+ tools, all processing client-side in the browser. Files never leave your device. |
+| <img src="cataloguecanvas/icon.png" width="150" height="150" /> | [CatalogueCanvas](cataloguecanvas/README.md) | cataloguecanvas | 0.2.2-1 | Organise your artwork, designs and creative files into catalogues and portfolios |
 | <img src="manyfold_solo/icon.png" width="150" height="150" /> | [Manyfold](manyfold_solo/README.md) | manyfold_solo | 0.148.0 | Manyfold 3D model manager as a Home Assistant add-on, using the manyfold-solo image with configurable library/index paths. |
 | <img src="nginx_webserver_proxy/icon.png" width="150" height="150" /> | [Nginx Proxy Manager + Static Web Server](nginx_webserver_proxy/README.md) | nginx_webserver_proxy | 2.14.1-1 | Nginx Proxy Manager with a built-in configurable static file server. Manage reverse proxies via NPM UI on port 81 while serving files from HA storage on port 80. |
 | <img src="obsidian_syncserver_npm/icon.png" width="150" height="150" /> | [Obsidian Sync Server NPM](obsidian_syncserver_npm/README.md) | obsidian_syncserver_npm | 3.5.2 | Self-hosted Obsidian LiveSync backend on CouchDB, bundled with Nginx Proxy Manager for TLS and certificate management. |

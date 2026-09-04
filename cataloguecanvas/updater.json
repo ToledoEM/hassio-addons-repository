@@ -1,0 +1,6 @@
+{
+  "source": "ghcr",
+  "upstream_repo": "cataloguecanvas/amd64-cataloguecanvas-homeassistant",
+  "upstream_version": "sha256:f9189e9b66797c513f35bbd14b189f951537e335b6fd32fe0e4965a3e1b27d6c",
+  "last_update": "2026-09-04"
+}

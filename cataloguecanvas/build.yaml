@@ -1,0 +1,9 @@
+# The Dockerfile is self-contained (FROM python:3.14-alpine) and builds the app
+# from source, so BUILD_FROM is unused. These values only satisfy the HA builder,
+# which requires a build_from entry per arch.
+build_from:
+  amd64: python:3.14-alpine
+  aarch64: python:3.14-alpine
+labels:
+  org.opencontainers.image.title: CatalogueCanvas
+  org.opencontainers.image.source: https://github.com/CatalogueCanvas/CatalogueCanvas
