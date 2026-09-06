@@ -116,7 +116,7 @@ yq -i ".version = \"$NEW_VERSION\"" "$CONFIG_YAML"
 # Some add-ons pin the upstream release separately from the add-on version, so
 # the add-on can carry a revision suffix (e.g. 2.8.8-1) without breaking the
 # upstream download URLs. Keep that ARG in step with the release we just found.
-if grep -q '^ARG UPSTREAM_VERSION=' "$ADDON_DIR/Dockerfile" 2>/dev/null; then
+if grep -q '^ARG UPSTREAM_VERSION=' "$ADDON_DIR/Dockerfile" 2> /dev/null; then
     sed -i "s|^ARG UPSTREAM_VERSION=.*|ARG UPSTREAM_VERSION=${LATEST}|" "$ADDON_DIR/Dockerfile"
 fi
 
