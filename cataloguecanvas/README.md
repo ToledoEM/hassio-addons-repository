@@ -24,7 +24,7 @@ This is a rebuild of the [upstream add-on](https://github.com/CatalogueCanvas/ca
 ## Configuration
 
 | Option | Default | Description |
-|--------|---------|-------------|
+| -------- | --------- | ------------- |
 | `admin_password` | `changeme` | Admin login password. Change it before starting. |
 | `admin_username` | `admin` | Admin account username. |
 | `site_title` | `CatalogueCanvas` | Name shown in the UI and on public portfolios. |
