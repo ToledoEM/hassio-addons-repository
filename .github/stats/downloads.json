@@ -1,22 +1,22 @@
 {
-  "generated": "2026-09-05",
+  "generated": "2026-09-12",
   "rows": [
     {
       "slug": "bentopdf",
       "arch": "aarch64",
-      "downloads": 160,
+      "downloads": 169,
       "created": "2026-04-03T09:31:29Z"
     },
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 175,
+      "downloads": 177,
       "created": "2026-04-03T09:31:21Z"
     },
     {
       "slug": "cataloguecanvas",
       "arch": "aarch64",
-      "downloads": 0,
+      "downloads": 2,
       "created": "2026-09-04T16:12:21Z"
     },
     {
@@ -28,13 +28,13 @@
     {
       "slug": "manyfold_solo",
       "arch": "aarch64",
-      "downloads": 336,
+      "downloads": 339,
       "created": "2026-04-03T09:31:26Z"
     },
     {
       "slug": "manyfold_solo",
       "arch": "amd64",
-      "downloads": 334,
+      "downloads": 337,
       "created": "2026-04-03T09:31:22Z"
     },
     {
