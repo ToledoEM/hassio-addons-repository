@@ -1,6 +1,6 @@
 # CatalogueCanvas documentation
 
-[Documentation](https://cataloguecanvas.app)    
+[Documentation](https://cataloguecanvas.app)
 
 ## Installation
 
@@ -18,7 +18,7 @@ Ingress (the thing that puts add-ons in the sidebar) works by loading the add-on
 ## Configuration options
 
 | Option | Required | Default | Description |
-|--------|----------|---------|-------------|
+| -------- | ---------- | --------- | ------------- |
 | `admin_password` | Yes | *(changme)* | Admin login password. |
 | `admin_username` | No | `admin` | Admin account username. |
 | `site_title` | No | `CatalogueCanvas` | Name shown in the UI and public portfolios. |
