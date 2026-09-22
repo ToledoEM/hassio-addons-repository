@@ -20,7 +20,9 @@ jobs:
           token: ${{ secrets.TAG_PUSH_TOKEN }}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: false
 
       - name: Find changed config.yaml files
         id: find_addons

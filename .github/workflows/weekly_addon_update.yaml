@@ -19,7 +19,9 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: false
 
       - name: Run resolver selftest
         run: uv run --with awesomeversion python3 .github/scripts/addon_version_resolver.py --selftest
@@ -59,7 +61,9 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
+        with:
+          enable-cache: false
 
       - name: Install yq and skopeo
         run: |
