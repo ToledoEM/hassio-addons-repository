@@ -129,6 +129,7 @@ jobs:
           tags: local/${{ matrix.addon }}-${{ matrix.arch }}:test
           build-args: |
             BUILD_FROM=${{ steps.information.outputs.build_from }}
+            BUILD_ARCH=${{ matrix.arch }}
           cache-from: type=local,src=/tmp/buildx-cache/${{ matrix.arch }}
           cache-to: type=local,dest=/tmp/buildx-cache-new/${{ matrix.arch }}
 
