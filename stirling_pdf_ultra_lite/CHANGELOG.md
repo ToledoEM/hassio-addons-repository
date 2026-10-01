@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.2-ultra-lite
+
+- Automated upstream update to 3.0.2-ultra-lite.
+- Details: <https://hub.docker.com/r/stirlingtools/stirling-pdf/tags?name=3.0.2-ultra-lite>
+
 ## 3.0.0-ultra-lite
 
 - Automated upstream update to 3.0.0-ultra-lite.
