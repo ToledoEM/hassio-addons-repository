@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.0.2-fat
+
+- Automated upstream update to 3.0.2-fat.
+- Details: <https://hub.docker.com/r/stirlingtools/stirling-pdf/tags?name=3.0.2-fat>
+
 ## 3.0.0-fat
 
 - Automated upstream update to 3.0.0-fat.
