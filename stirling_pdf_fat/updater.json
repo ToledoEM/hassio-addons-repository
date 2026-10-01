@@ -2,6 +2,6 @@
   "source": "dockerhub",
   "upstream_repo": "stirlingtools/stirling-pdf",
   "upstream_tag_filter": "fat",
-  "upstream_version": "3.0.0-fat",
-  "last_update": "2026-09-27"
+  "upstream_version": "3.0.2-fat",
+  "last_update": "2026-10-01"
 }
