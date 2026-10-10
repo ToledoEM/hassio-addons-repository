@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-03",
+  "generated": "2026-10-10",
   "rows": [
     {
       "slug": "bentopdf",
@@ -10,7 +10,7 @@
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 190,
+      "downloads": 194,
       "created": "2026-04-03T09:31:21Z"
     },
     {
@@ -22,7 +22,7 @@
     {
       "slug": "cataloguecanvas",
       "arch": "amd64",
-      "downloads": 2,
+      "downloads": 3,
       "created": "2026-09-04T16:12:23Z"
     },
     {
@@ -70,7 +70,7 @@
     {
       "slug": "obsidian_syncserver_solo",
       "arch": "amd64",
-      "downloads": 1,
+      "downloads": 2,
       "created": "2026-08-12T10:31:20Z"
     },
     {
@@ -100,13 +100,13 @@
     {
       "slug": "stirling_pdf_full",
       "arch": "aarch64",
-      "downloads": 140,
+      "downloads": 142,
       "created": "2026-04-03T09:31:49Z"
     },
     {
       "slug": "stirling_pdf_full",
       "arch": "amd64",
-      "downloads": 168,
+      "downloads": 170,
       "created": "2026-04-03T09:32:51Z"
     },
     {
