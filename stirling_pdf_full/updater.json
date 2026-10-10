@@ -1,6 +1,6 @@
 {
   "source": "dockerhub",
   "upstream_repo": "stirlingtools/stirling-pdf",
-  "upstream_version": "3.0.2",
-  "last_update": "2026-10-01"
+  "upstream_version": "3.1.0",
+  "last_update": "2026-10-10"
 }
