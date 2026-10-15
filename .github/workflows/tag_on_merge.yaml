@@ -9,9 +9,6 @@ jobs:
   tag-updated-addons:
     name: Tag addons with bumped versions
     runs-on: ubuntu-latest
-    concurrency:
-      group: readme-sync
-      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
@@ -71,6 +68,31 @@ jobs:
             git push origin "$tag"
           done
 
+  sync-readme:
+    name: Sync README add-on table
+    needs: tag-updated-addons
+    runs-on: ubuntu-latest
+    # Serialize README syncs only. A newer queued run replacing an older one
+    # is harmless here: it regenerates from the latest main anyway.
+    concurrency:
+      group: readme-sync
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.TAG_PUSH_TOKEN }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: false
+
       - name: Regenerate README add-on table
         run: uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
 
@@ -105,8 +127,14 @@ jobs:
             git add README.md
             git commit -m "bot: sync README add-on table"
             git push origin "$BRANCH"
-            echo "Updated existing PR #$EXISTING_PR"
-            exit 0
+            # The PR may have merged between the list call and the push, in
+            # which case the commit above reaches no PR. Fall through and open
+            # a fresh one from main instead.
+            if [ "$(gh pr view "$EXISTING_PR" --json state --jq .state)" = "OPEN" ]; then
+              echo "Updated existing PR #$EXISTING_PR"
+              exit 0
+            fi
+            echo "PR #$EXISTING_PR closed before push, opening a new one"
           fi
 
           # Build from the latest main, not this run's trigger commit: another
