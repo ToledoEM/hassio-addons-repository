@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.3
+
+- Automated upstream update to 3.5.3.
+- Details: <https://hub.docker.com/r/library/couchdb/tags?name=3.5.3>
+
 
 ## 3.5.2
 
