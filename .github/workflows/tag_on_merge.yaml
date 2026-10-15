@@ -9,6 +9,9 @@ jobs:
   tag-updated-addons:
     name: Tag addons with bumped versions
     runs-on: ubuntu-latest
+    concurrency:
+      group: readme-sync
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write
@@ -106,7 +109,16 @@ jobs:
             exit 0
           fi
 
-          git checkout -b "$BRANCH"
+          # Build from the latest main, not this run's trigger commit: another
+          # run may have merged a sync PR since this checkout was taken.
+          git fetch origin main
+          git checkout -- README.md
+          git checkout -B "$BRANCH" origin/main
+          uv run --with pyyaml python3 .github/scripts/regenerate_readme_table.py
+          if [ -z "$(git status --porcelain README.md)" ]; then
+            echo "README.md already up to date on main, nothing to do"
+            exit 0
+          fi
           git add README.md
           git commit -m "bot: sync README add-on table"
           git push --force origin "$BRANCH"

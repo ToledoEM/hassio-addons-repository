@@ -1,11 +1,11 @@
 # Global build args must be declared before the first FROM to be usable there.
 ARG BUILD_FROM=jc21/nginx-proxy-manager:latest
-ARG COUCHDB_FROM=couchdb:3.5.2
+ARG UPSTREAM_VERSION=3.5.3
 
 # Stage 1: source of the CouchDB runtime. CouchDB ships a self-contained
 # release under /opt/couchdb, including its own Erlang runtime (erts-*), so
 # it can be lifted into another image without installing Erlang separately.
-FROM ${COUCHDB_FROM} AS couchdb
+FROM couchdb:${UPSTREAM_VERSION} AS couchdb
 
 # Stage 2: Nginx Proxy Manager, which supplies s6-overlay and the admin UI.
 # Both images are Debian trixie, so the CouchDB release is binary compatible.
