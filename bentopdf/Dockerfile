@@ -4,7 +4,7 @@ ARG BUILD_VERSION=2.8.8-1
 # Upstream BentoPDF release to fetch. Tracked separately from BUILD_VERSION so
 # the add-on can carry its own revision suffix (e.g. 2.8.8-1) without breaking
 # the release URLs. Kept in sync with updater.json by check_addon_update.sh.
-ARG UPSTREAM_VERSION=2.8.8
+ARG UPSTREAM_VERSION=2.8.9
 
 # Stage 1: Download and extract the BentoPDF Simple Mode dist release (includes
 # bundled WASM). Simple Mode drops the bentopdf.com marketing UI and keeps every
