@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.9
+
+- Automated upstream update to 2.8.9.
+- Details: <https://github.com/alam00000/bentopdf/releases/tag/v2.8.9>
+
 ## 2.8.8-1
 
 - Switch to upstream's Simple Mode build, which drops the bentopdf.com marketing UI (nav bar, hero, features, FAQ, footer) and serves only the PDF tools. All 130 tools and the LibreOffice WebAssembly payload are unchanged.
