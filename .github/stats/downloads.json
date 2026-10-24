@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-17",
+  "generated": "2026-10-24",
   "rows": [
     {
       "slug": "bentopdf",
       "arch": "aarch64",
-      "downloads": 171,
+      "downloads": 181,
       "created": "2026-04-03T09:31:29Z"
     },
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 194,
+      "downloads": 224,
       "created": "2026-04-03T09:31:21Z"
     },
     {
@@ -28,13 +28,13 @@
     {
       "slug": "manyfold_solo",
       "arch": "aarch64",
-      "downloads": 406,
+      "downloads": 414,
       "created": "2026-04-03T09:31:26Z"
     },
     {
       "slug": "manyfold_solo",
       "arch": "amd64",
-      "downloads": 344,
+      "downloads": 346,
       "created": "2026-04-03T09:31:22Z"
     },
     {
@@ -100,19 +100,19 @@
     {
       "slug": "stirling_pdf_full",
       "arch": "aarch64",
-      "downloads": 146,
+      "downloads": 167,
       "created": "2026-04-03T09:31:49Z"
     },
     {
       "slug": "stirling_pdf_full",
       "arch": "amd64",
-      "downloads": 176,
+      "downloads": 192,
       "created": "2026-04-03T09:32:51Z"
     },
     {
       "slug": "stirling_pdf_ultra_lite",
       "arch": "aarch64",
-      "downloads": 17,
+      "downloads": 25,
       "created": "2026-05-26T14:21:18Z"
     },
     {
