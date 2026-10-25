@@ -49,7 +49,7 @@ def main() -> int:
         print("could not find Add-ons table in README.md", file=sys.stderr)
         return 1
 
-    new_content = pattern.sub(r"\1" + TABLE_HEADER + rows, content)
+    new_content = pattern.sub(r"\1\n" + TABLE_HEADER + rows, content)
     README.write_text(new_content)
     return 0
 
