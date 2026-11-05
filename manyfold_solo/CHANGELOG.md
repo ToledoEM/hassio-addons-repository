@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.154.1
+
+- Automated upstream update to 0.154.1.
+- Details: <https://github.com/manyfold3d/manyfold/releases/tag/v0.154.1>
+
 ## 0.154.0
 
 - Automated upstream update to 0.154.0.
