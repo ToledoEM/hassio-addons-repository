@@ -1,16 +1,16 @@
 {
-  "generated": "2026-10-31",
+  "generated": "2026-11-07",
   "rows": [
     {
       "slug": "bentopdf",
       "arch": "aarch64",
-      "downloads": 181,
+      "downloads": 187,
       "created": "2026-04-03T09:31:29Z"
     },
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 226,
+      "downloads": 248,
       "created": "2026-04-03T09:31:21Z"
     },
     {
@@ -28,13 +28,13 @@
     {
       "slug": "manyfold_solo",
       "arch": "aarch64",
-      "downloads": 414,
+      "downloads": 420,
       "created": "2026-04-03T09:31:26Z"
     },
     {
       "slug": "manyfold_solo",
       "arch": "amd64",
-      "downloads": 346,
+      "downloads": 348,
       "created": "2026-04-03T09:31:22Z"
     },
     {
@@ -52,7 +52,7 @@
     {
       "slug": "obsidian_syncserver_npm",
       "arch": "aarch64",
-      "downloads": 5,
+      "downloads": 7,
       "created": "2026-08-12T10:39:17Z"
     },
     {
@@ -100,13 +100,13 @@
     {
       "slug": "stirling_pdf_full",
       "arch": "aarch64",
-      "downloads": 171,
+      "downloads": 177,
       "created": "2026-04-03T09:31:49Z"
     },
     {
       "slug": "stirling_pdf_full",
       "arch": "amd64",
-      "downloads": 198,
+      "downloads": 208,
       "created": "2026-04-03T09:32:51Z"
     },
     {
@@ -118,7 +118,7 @@
     {
       "slug": "stirling_pdf_ultra_lite",
       "arch": "amd64",
-      "downloads": 33,
+      "downloads": 42,
       "created": "2026-05-26T14:20:52Z"
     }
   ]
