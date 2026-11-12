@@ -28,7 +28,7 @@ jobs:
         id: find_addons
         run: |
           if git rev-parse HEAD^ >/dev/null 2>&1; then
-            changed_config_files=$(git diff --name-only HEAD^ HEAD | grep -E '^[^/]+/config\.(json|ya?ml)$' || true)
+            changed_config_files=$(git diff --name-only --diff-filter=d HEAD^ HEAD | grep -E '^[^/]+/config\.(json|ya?ml)$' || true)
           else
             changed_config_files=""
           fi
