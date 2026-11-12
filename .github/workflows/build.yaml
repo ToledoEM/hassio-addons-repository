@@ -19,8 +19,6 @@ on:
       - "stirling_pdf_ultra_lite@*"
       - "nginx_webserver_proxy-*"
       - "nginx_webserver_proxy@*"
-      - "nginx_webserver_proxy_test-*"
-      - "nginx_webserver_proxy_test@*"
       - "obsidian_syncserver_solo-*"
       - "obsidian_syncserver_solo@*"
       - "obsidian_syncserver_ssl-*"
@@ -42,7 +40,6 @@ on:
           - stirling_pdf_full
           - stirling_pdf_ultra_lite
           - nginx_webserver_proxy
-          - nginx_webserver_proxy_test
           - obsidian_syncserver_solo
           - obsidian_syncserver_ssl
           - obsidian_syncserver_npm
@@ -67,7 +64,6 @@ jobs:
           - stirling_pdf_full
           - stirling_pdf_ultra_lite
           - nginx_webserver_proxy
-          - nginx_webserver_proxy_test
           - obsidian_syncserver_solo
           - obsidian_syncserver_ssl
           - obsidian_syncserver_npm
@@ -187,36 +183,15 @@ jobs:
           container-registry-password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-pull nginx base image
-        if: matrix.addon == 'nginx_webserver_proxy' && ((startsWith(github.ref_name, 'nginx_webserver_proxy@') || startsWith(github.ref_name, 'nginx_webserver_proxy-')) || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
+        if: matrix.addon == 'nginx_webserver_proxy' && (startsWith(github.ref_name, 'nginx_webserver_proxy') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
         run: docker pull jc21/nginx-proxy-manager:latest
 
       - name: Build and push nginx_webserver_proxy
-        if: matrix.addon == 'nginx_webserver_proxy' && ((startsWith(github.ref_name, 'nginx_webserver_proxy@') || startsWith(github.ref_name, 'nginx_webserver_proxy-')) || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
+        if: matrix.addon == 'nginx_webserver_proxy' && (startsWith(github.ref_name, 'nginx_webserver_proxy') || github.event_name == 'workflow_dispatch' && (inputs.addon == 'all' || inputs.addon == 'nginx_webserver_proxy'))
         uses: home-assistant/builder/actions/build-image@2026.03.2
         with:
           arch: ${{ matrix.arch }}
           context: nginx_webserver_proxy
-          image: ${{ steps.meta.outputs.image }}
-          image-tags: ${{ steps.meta.outputs.version }}
-          version: ${{ steps.meta.outputs.version }}
-          build-args: BUILD_FROM=jc21/nginx-proxy-manager:latest
-          cache-gha: "false"
-          cosign: "false"
-          push: "true"
-          container-registry-password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Test add-on for issue #4 (NPM >= 2.15 build failure). Tag checks use
-      # '@'/'-' suffixes so prod and test tags never trigger each other's steps.
-      - name: Pre-pull nginx test base image
-        if: matrix.addon == 'nginx_webserver_proxy_test' && (startsWith(github.ref_name, 'nginx_webserver_proxy_test@') || startsWith(github.ref_name, 'nginx_webserver_proxy_test-') || github.event_name == 'workflow_dispatch' && inputs.addon == 'nginx_webserver_proxy_test')
-        run: docker pull jc21/nginx-proxy-manager:latest
-
-      - name: Build and push nginx_webserver_proxy_test
-        if: matrix.addon == 'nginx_webserver_proxy_test' && (startsWith(github.ref_name, 'nginx_webserver_proxy_test@') || startsWith(github.ref_name, 'nginx_webserver_proxy_test-') || github.event_name == 'workflow_dispatch' && inputs.addon == 'nginx_webserver_proxy_test')
-        uses: home-assistant/builder/actions/build-image@2026.03.2
-        with:
-          arch: ${{ matrix.arch }}
-          context: nginx_webserver_proxy_test
           image: ${{ steps.meta.outputs.image }}
           image-tags: ${{ steps.meta.outputs.version }}
           version: ${{ steps.meta.outputs.version }}

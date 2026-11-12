@@ -1,8 +1,6 @@
 {
   "source": "dockerhub",
   "upstream_repo": "jc21/nginx-proxy-manager",
-  "upstream_version": "2.14.1",
-  "last_update": "2026-08-06",
-  "paused": true,
-  "paused_reason": "2.15.x base image grew past BuildKit's memory limit on home-assistant/builder, breaking CI builds. See issue #4."
+  "upstream_version": "2.17.0",
+  "last_update": "2026-11-12"
 }
