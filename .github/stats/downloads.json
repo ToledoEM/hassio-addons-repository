@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-07",
+  "generated": "2026-11-14",
   "rows": [
     {
       "slug": "bentopdf",
@@ -10,7 +10,7 @@
     {
       "slug": "bentopdf",
       "arch": "amd64",
-      "downloads": 248,
+      "downloads": 252,
       "created": "2026-04-03T09:31:21Z"
     },
     {
@@ -118,7 +118,7 @@
     {
       "slug": "stirling_pdf_ultra_lite",
       "arch": "amd64",
-      "downloads": 42,
+      "downloads": 44,
       "created": "2026-05-26T14:20:52Z"
     }
   ]
