@@ -65,12 +65,6 @@ jobs:
         with:
           enable-cache: false
 
-      - name: Install yq and skopeo
-        run: |
-          sudo snap install yq
-          sudo apt-get update -y
-          sudo apt-get install -y skopeo
-
       - name: Check for upstream update
         id: check
         env:
