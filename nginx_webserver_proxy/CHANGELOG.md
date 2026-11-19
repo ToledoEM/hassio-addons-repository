@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.17.1
+
+- Automated upstream update to 2.17.1.
+- Details: <https://hub.docker.com/r/jc21/nginx-proxy-manager/tags?name=2.17.1>
+
 
 ## 2.17.0
 
