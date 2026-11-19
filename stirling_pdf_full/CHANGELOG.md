@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.4.0
+
+- Automated upstream update to 3.4.0.
+- Details: <https://hub.docker.com/r/stirlingtools/stirling-pdf/tags?name=3.4.0>
+
 ## 3.3.0
 
 - Automated upstream update to 3.3.0.
