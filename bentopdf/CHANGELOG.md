@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.12
+
+- Automated upstream update to 2.8.12.
+- Details: <https://github.com/alam00000/bentopdf/releases/tag/v2.8.12>
+
 ## 2.8.11
 
 - Automated upstream update to 2.8.11.
